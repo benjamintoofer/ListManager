@@ -17,8 +17,9 @@ import javafx.scene.layout.HBox;
 
 public class ClassListView extends VBox{
 
-    private  ListView<String> listView;
+    private static ListView<String> listView;
     private HBox buttonBox;
+    private Button addCourseButton, removeCourseButton;
 
     public ClassListView(){
 
@@ -39,12 +40,10 @@ public class ClassListView extends VBox{
 
         //Instantiate add and remove course buttons
         buttonBox = new HBox();
-        Button addCourseButton = new Button("+");
+        addCourseButton = new Button("+");
         addCourseButton.setId("add_course_button");
-        addCourseButton.setOnAction(new AddRemoveClassHandler());
-        Button removeCourseButton = new Button("-");
+        removeCourseButton = new Button("-");
         removeCourseButton.setId("remove_course_button");
-        removeCourseButton.setOnAction(new AddRemoveClassHandler());
         buttonBox.getChildren().addAll(addCourseButton,removeCourseButton);
 
 
@@ -53,8 +52,29 @@ public class ClassListView extends VBox{
         this.getChildren().addAll(listView,buttonBox);
     }
 
-    private boolean removeCourse(){
+    public boolean removeCourse(String course){
+
+        if(!course.equals(null)){
+
+
+            listView.getItems().remove(course);
+        }
+
+        //listView.getItems().so
         return true;
+    }
+    public Button getAddCourseButton(){
+
+        return addCourseButton;
+    }
+
+    public Button getRemoveCourseButton(){
+
+        return removeCourseButton;
+    }
+    public static String getSelectedCourse(){
+
+        return listView.getSelectionModel().getSelectedItem();
     }
 
 
@@ -125,27 +145,7 @@ public class ClassListView extends VBox{
         private String getString(){
             return (getItem() == null ? "" : getItem().toString());
         }
-    }
-
-
-
-
-    private class AddRemoveClassHandler implements EventHandler<ActionEvent>{
-
-        @Override
-        public void handle(ActionEvent e){
-
-            System.out.println("Handling");
-            if(e.getTarget().getClass().toString().equals("class javafx.scene.control.Button")){
-
-                if(((Button)e.getTarget()).getId().equals("add_course_button")){
-                    System.out.println("Adding course");
-                }
-                if(((Button)e.getTarget()).getId().equals("remove_course_button")){
-                    System.out.println("Removing course");
-                }
-            }
-        }
 
     }
+
 }
