@@ -6,15 +6,20 @@ package sample;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.HBox;
 
 public class ClassListView extends VBox{
 
-    private  ListView<String> listView;
-    private MenuBar courseMenuBar;
+    private static ListView<String> listView;
+    private HBox buttonBox;
+    private Button addCourseButton, removeCourseButton;
 
     public ClassListView(){
 
@@ -25,21 +30,53 @@ public class ClassListView extends VBox{
 
         //Instantiate listView
         listView = new ListView<>();
+        listView.setEditable(true);
         listView.setPrefSize(300,900);
         ObservableList<String> tempItems = FXCollections.observableArrayList("COMP2730", "COMP2400", "COMP3351", "COMP3381");
         listView.setItems(tempItems);
         listView.setCellFactory((ListView<String> l)->new CustomClassListCell());
 
 
-        //Instantiate courseMenuBar
-        courseMenuBar = new MenuBar();
-        Menu addCourseButton = new Menu("+");
-        Menu removeCourseButton = new Menu("-");
-        courseMenuBar.getMenus().addAll(addCourseButton,removeCourseButton);
+
+        //Instantiate add and remove course buttons
+        buttonBox = new HBox();
+        addCourseButton = new Button("+");
+        addCourseButton.setId("add_course_button");
+        removeCourseButton = new Button("-");
+        removeCourseButton.setId("remove_course_button");
+        buttonBox.getChildren().addAll(addCourseButton,removeCourseButton);
 
 
-        this.getChildren().addAll(listView,courseMenuBar);
+
+
+        this.getChildren().addAll(listView,buttonBox);
     }
+
+    public boolean removeCourse(String course){
+
+        if(!course.equals(null)){
+
+
+            listView.getItems().remove(course);
+        }
+
+        //listView.getItems().so
+        return true;
+    }
+    public Button getAddCourseButton(){
+
+        return addCourseButton;
+    }
+
+    public Button getRemoveCourseButton(){
+
+        return removeCourseButton;
+    }
+    public static String getSelectedCourse(){
+
+        return listView.getSelectionModel().getSelectedItem();
+    }
+
 
     private class CustomClassListCell extends ListCell<String>{
 
@@ -51,9 +88,8 @@ public class ClassListView extends VBox{
 
         @Override
         public void startEdit(){
-            System.out.println("Start edit 1");
+
             super.startEdit();
-            System.out.println("Start edit");
             if(textField == null)
                 createTextField();
 
@@ -75,7 +111,7 @@ public class ClassListView extends VBox{
         @Override
         public void updateItem(String item, boolean empty){
 
-            super.updateItem(item,empty);
+            super.updateItem(item, empty);
 
             if(empty){
                 setText(null);
@@ -88,11 +124,11 @@ public class ClassListView extends VBox{
                     setText(null);
                 }else{
                     setText(getString());
-                    setGraphic(getGraphic());
+                    setGraphic(null);
                 }
             }
-            super.updateListView(this.getListView());
         }
+
 
         private void createTextField(){
 
@@ -109,5 +145,7 @@ public class ClassListView extends VBox{
         private String getString(){
             return (getItem() == null ? "" : getItem().toString());
         }
+
     }
+
 }

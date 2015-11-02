@@ -150,6 +150,10 @@ public class UserInterface extends BorderPane{
         return winHeight;
     }
 
+    public ClassListView getClassListView(){
+
+        return classListView;
+    }
     private class CustomTreeCell extends  TreeCell<String>{
 
         private final ContextMenu contextMenu = new ContextMenu();
