@@ -115,6 +115,11 @@ public class UserInterface extends BorderPane implements Observer{
 
         return classListView;
     }
+
+    public SubjectTreeView getSubjectTreeView(){
+
+        return subjectTreeView;
+    }
     /*
         Add Class Model and Controller
      */

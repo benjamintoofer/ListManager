@@ -53,13 +53,16 @@ public class SubjectTreeView extends VBox{
             init();
         }
         private void init(){
-            //Initialize Context Menu
-            MenuItem addItem = new MenuItem("Add");
-            addItem.setId("add_menu_item");
-            MenuItem deleteItem = new MenuItem("Delete");
-            deleteItem.setId("delete_menu_item");
 
-            contextMenu.getItems().addAll(addItem, deleteItem);
+            //Initialize Context Menu
+            if(contextMenu.getItems().isEmpty()) {
+                MenuItem addItem = new MenuItem("Add");
+                addItem.setId("add_menu_item");
+                MenuItem deleteItem = new MenuItem("Delete");
+                deleteItem.setId("delete_menu_item");
+
+                contextMenu.getItems().addAll(addItem, deleteItem);
+            }
             //contextMenu.setOnAction(new ContextMenuHandler());
 
         }
