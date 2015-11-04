@@ -14,10 +14,19 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
+import javafx.scene.control.Dialog;
+
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+import java.util.Optional;
 
 public class ClassListView extends VBox{
 
     private static ListView<String> listView;
+    private ClassListModel model;
+    private DialogBox dialog;
+    private  VBox vBox;
     private HBox buttonBox;
     private Button addCourseButton, removeCourseButton;
 
@@ -29,11 +38,11 @@ public class ClassListView extends VBox{
     private void init(){
 
         //Instantiate listView
-        listView = new ListView<>();
+        listView =  new ListView<String>();
         listView.setEditable(true);
         listView.setPrefSize(300,900);
         ObservableList<String> tempItems = FXCollections.observableArrayList("COMP2730", "COMP2400", "COMP3351", "COMP3381");
-        listView.setItems(tempItems);
+        //listView.setItems(tempItems);
         listView.setCellFactory((ListView<String> l)->new CustomClassListCell());
 
 
@@ -47,21 +56,30 @@ public class ClassListView extends VBox{
         buttonBox.getChildren().addAll(addCourseButton,removeCourseButton);
 
 
+        this.getChildren().addAll(listView, buttonBox);
+
+        //////////
+        dialog = new DialogBox(true);
+        dialog.setTitle("Class INformation");
 
 
-        this.getChildren().addAll(listView,buttonBox);
+        ////////
     }
 
-    public boolean removeCourse(String course){
-
-        if(!course.equals(null)){
+    public void removeCourse(ArrayList<Class> list){
 
 
-            listView.getItems().remove(course);
-        }
+
+            listView.getItems().removeAll(listView.getItems());
+            ArrayList<String> newList = new ArrayList<>();
+            for(Class c: list){
+
+                newList.add(c.getClassName());
+            }
+            listView.getItems().addAll(newList);
 
         //listView.getItems().so
-        return true;
+
     }
     public Button getAddCourseButton(){
 
@@ -72,11 +90,26 @@ public class ClassListView extends VBox{
 
         return removeCourseButton;
     }
-    public static String getSelectedCourse(){
 
+    public String getSelectedClass(){
         return listView.getSelectionModel().getSelectedItem();
     }
+    public void addClasses(ArrayList<Class> list){
 
+        listView.getItems().removeAll(listView.getItems());
+        ArrayList<String> newList = new ArrayList<>();
+        for(Class c: list){
+
+            newList.add(c.getClassName());
+        }
+        listView.getItems().addAll(newList);
+        //System.out.println(model);
+        System.out.println(model.getClassList().size());
+    }
+
+    public void addModel(ClassListModel model){
+        this.model = model;
+    }
 
     private class CustomClassListCell extends ListCell<String>{
 
@@ -90,12 +123,33 @@ public class ClassListView extends VBox{
         public void startEdit(){
 
             super.startEdit();
-            if(textField == null)
+
+            /*if(textField == null)
                 createTextField();
 
             setText(null);
             setGraphic(textField);
-            textField.selectAll();
+            textField.selectAll();*/
+            String oldName = getText();
+            String newName = null;
+            String newDesc = null;
+            dialog.setClassTextField(oldName);
+            dialog.setDescTextField(model.getDescByClass(oldName));
+            Optional<ButtonType> result = dialog.showAndWait();
+
+
+            if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
+
+                newName = dialog.getClassName();
+                newDesc = dialog.getDesc();
+                model.modifyClass(oldName,newName,newDesc);
+                //model.addClassToList(new Class(name, desc));
+            }else{
+                //setText(oldName);
+                this.cancelEdit();
+            }
+            //setText(name);
+
         }
 
         @Override
@@ -104,7 +158,6 @@ public class ClassListView extends VBox{
             super.cancelEdit();
 
             setText((String) getItem());
-            setGraphic(getGraphic());
 
         }
 
@@ -117,15 +170,17 @@ public class ClassListView extends VBox{
                 setText(null);
                 setGraphic(null);
             }else{
-                if(isEditing()){
+                if(isEditing()) {
                     if(textField != null){
                         textField.setText(getString());
                     }
                     setText(null);
-                }else{
+                }
+                else{
                     setText(getString());
                     setGraphic(null);
                 }
+
             }
         }
 
@@ -135,7 +190,7 @@ public class ClassListView extends VBox{
             textField = new TextField(getString());
             textField.setOnKeyReleased((KeyEvent t) ->{
                 if(t.getCode() == KeyCode.ENTER){
-                    commitEdit(textField.getText());
+                    //commitEdit(textField.getText());
                 }else if(t.getCode() == KeyCode.ESCAPE){
                     cancelEdit();
                 }

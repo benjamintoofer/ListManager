@@ -1,22 +1,35 @@
 package sample;
 
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 
-public class Controller {
+
+import java.util.Observable;
+import java.util.Observer;
+
+public class Controller implements EventHandler{
 
     private UserInterface ui;
 
     public Controller(UserInterface ui){
 
         this.ui = ui;
+
+
     }
 
     private void init(){
 
         ui.getClassListView().getAddCourseButton().setOnAction(new AddRemoveClassHandler());
         ui.getClassListView().getAddCourseButton().setOnAction(new AddRemoveClassHandler());
+    }
+
+    @Override
+    public void handle(Event event)
+    {
+
     }
 
     private class AddRemoveClassHandler implements EventHandler<ActionEvent> {

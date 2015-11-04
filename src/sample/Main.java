@@ -10,15 +10,13 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
-    static UserInterface ui;
-    static Controller listManagerController;
+    static RunListManager RLM;
     @Override
     public void start(Stage primaryStage) throws Exception{
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
 
-        ui = new UserInterface(1200,900);
-        listManagerController = new Controller(ui);
-        Scene scene = new Scene(ui, ui.getWinWidth(), ui.getWinHeight());
+        RLM = new RunListManager();
+        Scene scene = new Scene(RLM.getUIView(), RLM.getUIView().getWinWidth(), RLM.getUIView().getWinHeight());
 
         //Scene scene
         primaryStage.setTitle("List Manager");

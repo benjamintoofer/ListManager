@@ -9,6 +9,8 @@ public class Subject {
 
     private String name;
     private String description;
+    private int position;
+    private boolean isAssociated;
     private ArrayList<Subject> subTopicList;
     private ArrayList<String> learningOutcomeList;
 
@@ -57,5 +59,15 @@ public class Subject {
 
         this.learningOutcomeList.add(learnOut);
 
+    }
+
+    public int getPosition()
+    {
+        return position;
+    }
+
+    public void setPosition(int position)
+    {
+        this.position = position;
     }
 }

@@ -9,7 +9,15 @@ public class Class {
 	public int CRN;
 	ArrayList<Subject> subjects = new ArrayList<Subject>();
 //	ArrayList<LearningOutcome> associatedLO = new ArrayList<LearningOutcome>();
-	
+
+    public Class(String name, String desc){
+        className = name;
+        classDescription = desc;
+    }
+
+    public Class(){
+        new Class("","");
+    }
 	//Getters and Setters
 	public String getClassName() {
 		return className;
