@@ -149,11 +149,15 @@ public class UserInterface extends BorderPane implements Observer{
     }
 
 
-
+    /*
+        Updated from Observables:
+         1.SubjectTreeModel
+         2.ClassListModel
+     */
     @Override
     public void update(Observable o, Object arg)
     {
-        System.out.println(o.getClass().toString());
+
         /*
             Update Class list view when change has occured in Class list model
          */
@@ -170,10 +174,18 @@ public class UserInterface extends BorderPane implements Observer{
         }
 
         /*
-            Update Subject tree view when change has occured in Subject tree model
+            Update Subject tree view when change has occurred in Subject tree model
          */
         if(o.getClass().toString().equals("class sample.SubjectTreeModel")){
+            if(arg.equals("add")){
+                //System.out.println(subjectTreeView.getSelectedTreeItem().getName());
+                subjectTreeView.addChildToTreeView(subjectTreeModel.getChildToAdd());
+                //System.out.println(subjectTreeModel.printTree());
 
+            }
+            if(arg.equals("remove")){
+
+            }
         }
     }
 

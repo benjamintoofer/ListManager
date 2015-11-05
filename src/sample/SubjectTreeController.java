@@ -26,14 +26,16 @@ public class SubjectTreeController implements EventHandler<ActionEvent>{
 
             if(((MenuItem)e.getTarget()).getId().equals("add_menu_item")){
 
-                System.out.println("Adding");
+
                 addClassDialogBox.setClassTextField("");
                 addClassDialogBox.setDescTextField("");
 
                 Optional<ButtonType> result = addClassDialogBox.showAndWait();
                 if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
                     //classListModel.removeClassFromList(classListView.getSelectedClass());
-                    view.getSelectedTreeItem();
+                    //view.getSelectedTreeItem();
+                    Subject addSubject = new Subject(addClassDialogBox.getClassName(),addClassDialogBox.getDesc());
+                    model.addItem(view.getSelectedTreeItem(),addSubject);
                 }
 
             }else if(((MenuItem) e.getTarget()).getId().equals("delete_menu_item")){

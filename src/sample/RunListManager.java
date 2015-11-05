@@ -12,6 +12,10 @@ public class RunListManager {
     private SubjectTreeModel subjectTreeModel;
 
 
+    /*
+        Called from main
+        Sets up al models,controllers, and views
+     */
     public RunListManager(){
 
         init();
@@ -24,7 +28,9 @@ public class RunListManager {
         classListController = new ClassListController();
         classListModel = new ClassListModel();
 
-        classListModel.addObserver(uiView);
+
+
+
         classListController.addModel(classListModel);
         classListController.addView(uiView.getClassListView());
 
@@ -39,6 +45,10 @@ public class RunListManager {
 
         uiView.addSubjectTreeController(subjectTreeController);
         uiView.addSubjectTreeModel(subjectTreeModel);
+
+        //Adding observers
+        classListModel.addObserver(uiView);
+        subjectTreeModel.addObserver(uiView);
 
 
     }

@@ -68,8 +68,6 @@ public class ClassListView extends VBox{
 
     public void removeCourse(ArrayList<Class> list){
 
-
-
             listView.getItems().removeAll(listView.getItems());
             ArrayList<String> newList = new ArrayList<>();
             for(Class c: list){
@@ -78,7 +76,6 @@ public class ClassListView extends VBox{
             }
             listView.getItems().addAll(newList);
 
-        //listView.getItems().so
 
     }
     public Button getAddCourseButton(){

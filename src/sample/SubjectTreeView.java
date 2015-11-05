@@ -30,7 +30,10 @@ public class SubjectTreeView extends VBox{
     private void init(){
 
         rootNode.setExpanded(true);
-        rootNode.setValue(new Subject("Root", "Root Desc"));
+        Subject root = new Subject("Root","Root Desc");
+        root.setPosition(0);
+        root.setPath(".0");
+        rootNode.setValue(root);
         treeView = new TreeView<>((TreeItem<Subject>) rootNode);
         treeView.setPrefSize(400,900);
         treeView.setEditable(true);
@@ -45,7 +48,12 @@ public class SubjectTreeView extends VBox{
 
     public Subject getSelectedTreeItem(){
         //treeView
+        System.out.println(treeView.getSelectionModel().getSelectedItem().getValue().getName());
         return treeView.getSelectionModel().getSelectedItem().getValue();
+    }
+
+    public void addChildToTreeView(Subject child){
+        treeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<Subject>(child));
     }
     private class CustomTreeCell extends TreeCell<Subject> {//MUST BE OF TYPE SUBJECT
 
