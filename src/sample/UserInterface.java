@@ -180,10 +180,14 @@ public class UserInterface extends BorderPane implements Observer{
             if(arg.equals("add")){
                 //System.out.println(subjectTreeView.getSelectedTreeItem().getName());
                 subjectTreeView.addChildToTreeView(subjectTreeModel.getChildToAdd());
-                //System.out.println(subjectTreeModel.printTree());
+                System.out.println(subjectTreeModel.printTree());
 
             }
             if(arg.equals("remove")){
+                System.out.println("Remove child");
+                subjectTreeView.removeChildFromTreeView(subjectTreeModel.getChildToRemove());
+                System.out.println("print tree");
+                System.out.println(subjectTreeModel.printTree());
 
             }
         }

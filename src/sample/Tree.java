@@ -55,21 +55,26 @@ public class Tree<T> {
         int index = path.lastIndexOf(".");
         String newString = path.substring(index+1,path.length());
         String subString = path.substring(0,index);
+        int num = Integer.parseInt(newString);
+        Node<T> nodeToReturn = null;
 
         if (subString.equals("")){
-            return node;
+            if(((Subject)node.getData()).getPosition() == num){
+                nodeToReturn =  node;
+            }
+
         }else{
 
-            int num = Integer.parseInt(newString);
-            //if(node.getChildren() != null ){
-            for(Node<T> n : node.getChildren()){
-                if(((Subject)n.getData()).getPosition() == num){
-                    return traverseTree(subString,n);
+            if(((Subject)node.getData()).getPosition() == num){
+                for(Node<T> n : node.getChildren()){
+                    nodeToReturn =  traverseTree(subString,n);
+                    if(nodeToReturn != null){
+                        return nodeToReturn;
+                    }
                 }
-
             }
         }
-        return null;
+        return nodeToReturn;
     }
 
     public String printTree(){
@@ -153,6 +158,7 @@ public class Tree<T> {
             }
             child.setParent(this);
             //Set the path of the new child with the parents plus the childs new position in the list
+            //System.out.println("Parent: "+((Subject) this.getData()).getName()+" Child: "+((Subject)child.getData()).getName());
             ((Subject)child.getData()).setPath("." + (this.childIndex)+((Subject) this.getData()).getPath());
             ((Subject)child.getData()).setPosition(this.childIndex);
             this.childIndex++;

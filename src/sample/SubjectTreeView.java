@@ -47,13 +47,20 @@ public class SubjectTreeView extends VBox{
     }
 
     public Subject getSelectedTreeItem(){
-        //treeView
-        System.out.println(treeView.getSelectionModel().getSelectedItem().getValue().getName());
+
         return treeView.getSelectionModel().getSelectedItem().getValue();
     }
 
     public void addChildToTreeView(Subject child){
         treeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<Subject>(child));
+
+    }
+
+    public void removeChildFromTreeView(Subject child){
+
+        TreeItem<Subject> temp = treeView.getSelectionModel().getSelectedItem();
+        treeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(temp);
+
     }
     private class CustomTreeCell extends TreeCell<Subject> {//MUST BE OF TYPE SUBJECT
 
@@ -121,7 +128,7 @@ public class SubjectTreeView extends VBox{
 
         @Override
         public void updateItem(Subject item, boolean empty){
-
+            //System.out.println("update view");
             super.updateItem(item,empty);
 
             if(empty){
