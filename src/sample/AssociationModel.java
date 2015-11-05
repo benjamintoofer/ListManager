@@ -5,10 +5,38 @@
  */
 package sample;
 
+import java.util.ArrayList;
+import java.util.Observable;
+
 /**
  *
  * @author Mans
  */
-public class AssociationModel {
+public class AssociationModel  extends Observable
+{
+    public AssociationModel()
+     {
+         init();       
+     }
+    private ArrayList<Association> associationList;
+    
+    public void init()
+    {
+        associationList = new ArrayList<Association>();
+    }
+    public void addAssociation(Association s)
+    {
+        associationList.add(s);
+        setChanged();
+        notifyObservers();
+    }
+    /*public Association getAssociation()
+    {
+        
+    }*/
+    public void removeAssociation(Association s)
+    {
+        
+    }
     
 }
