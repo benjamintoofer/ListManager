@@ -39,10 +39,9 @@ public class ClassListController implements EventHandler<ActionEvent> {
 
 
             }else if(((Button) e.getTarget()).getId().equals("remove_course_button")){
-                System.out.println("Deleteing");
 
                 if(classListView.getSelectedClass() != null){
-                    System.out.println("Selected:"+ classListView.getSelectedClass());
+
                     removeClassDialogBox.setDialogContentText(classListView.getSelectedClass());
                     Optional<ButtonType> result = removeClassDialogBox.showAndWait();
 

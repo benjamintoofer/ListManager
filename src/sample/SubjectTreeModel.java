@@ -1,5 +1,6 @@
 package sample;
 
+import java.util.ArrayList;
 import java.util.Observable;
 
 /**
@@ -7,7 +8,15 @@ import java.util.Observable;
  */
 public class SubjectTreeModel extends Observable{
 
+    Subject rootNode;
+
     public SubjectTreeModel(){
 
+        init();
+    }
+
+    private void init(){
+
+        rootNode = new Subject("Root","Root Desc");
     }
 }

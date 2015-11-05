@@ -10,14 +10,16 @@ import javafx.scene.layout.VBox;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Optional;
 
 /**
  * Created by benjamintoofer on 11/2/15.
  */
 public class SubjectTreeView extends VBox{
 
-    private TreeView<String> treeView;
-    private TreeItem<String> rootNode = new TreeItem<>("Root");
+    private TreeView<Subject> treeView;
+    private TreeItem<Subject> rootNode = new TreeItem<>();
+    private DialogBox addDialogBox;
     private final ContextMenu contextMenu = new ContextMenu();
 
     public SubjectTreeView(){
@@ -28,12 +30,12 @@ public class SubjectTreeView extends VBox{
     private void init(){
 
         rootNode.setExpanded(true);
-
-        treeView = new TreeView<>((TreeItem<String>) rootNode);
+        rootNode.setValue(new Subject("Root", "Root Desc"));
+        treeView = new TreeView<>((TreeItem<Subject>) rootNode);
         treeView.setPrefSize(400,900);
         treeView.setEditable(true);
-        treeView.setCellFactory((TreeView<String> p) -> new CustomTreeCell());
-
+        treeView.setCellFactory((TreeView<Subject> p) -> new CustomTreeCell());
+        addDialogBox = new DialogBox(true);
         this.getChildren().add(treeView);
     }
 
@@ -41,8 +43,11 @@ public class SubjectTreeView extends VBox{
         return contextMenu;
     }
 
-
-    private class CustomTreeCell extends TreeCell<String> {
+    public Subject getSelectedTreeItem(){
+        //treeView
+        return treeView.getSelectionModel().getSelectedItem().getValue();
+    }
+    private class CustomTreeCell extends TreeCell<Subject> {//MUST BE OF TYPE SUBJECT
 
 
         private TextField textField;
@@ -54,7 +59,7 @@ public class SubjectTreeView extends VBox{
         }
         private void init(){
 
-            //Initialize Context Menu
+            //Add items to ContextMenu and set ID's for items
             if(contextMenu.getItems().isEmpty()) {
                 MenuItem addItem = new MenuItem("Add");
                 addItem.setId("add_menu_item");
@@ -63,20 +68,37 @@ public class SubjectTreeView extends VBox{
 
                 contextMenu.getItems().addAll(addItem, deleteItem);
             }
-            //contextMenu.setOnAction(new ContextMenuHandler());
 
         }
         @Override
         public void startEdit(){
 
-            super.startEdit();
+            /*super.startEdit();
             System.out.println("Start edit");
             if(textField == null)
                 createTextField();
 
             setText(null);
             setGraphic(textField);
-            textField.selectAll();
+            textField.selectAll();*/
+            String oldName = getText();
+            String newName = null;
+            String newDesc = null;
+            addDialogBox.setClassTextField(oldName);
+            addDialogBox.setDescTextField("");
+            Optional<ButtonType> result = addDialogBox.showAndWait();
+
+            if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
+
+
+                newName = addDialogBox.getClassName();
+                newDesc = addDialogBox.getDesc();
+                //model.modifyClass(oldName,newName,newDesc);
+                //model.addClassToList(new Class(name, desc));
+            }else{
+                //setText(oldName);
+                this.cancelEdit();
+            }
         }
 
         @Override
@@ -84,13 +106,13 @@ public class SubjectTreeView extends VBox{
 
             super.cancelEdit();
 
-            setText((String) getItem());
+            setText(getItem().getName());
             setGraphic(getTreeItem().getGraphic());
 
         }
 
         @Override
-        public void updateItem(String item, boolean empty){
+        public void updateItem(Subject item, boolean empty){
 
             super.updateItem(item,empty);
 
@@ -121,7 +143,7 @@ public class SubjectTreeView extends VBox{
             textField = new TextField(getString());
             textField.setOnKeyReleased((KeyEvent t) ->{
                 if(t.getCode() == KeyCode.ENTER){
-                    commitEdit(textField.getText());
+                    //commitEdit(textField.getText());
                 }else if(t.getCode() == KeyCode.ESCAPE){
                     cancelEdit();
                 }
@@ -135,24 +157,8 @@ public class SubjectTreeView extends VBox{
         }
 
         private String getString(){
-            return (getItem() == null ? "" : getItem().toString());
+            return (getItem() == null ? "" : getItem().getName());
         }
     }
 
-    private class ContextMenuHandler implements EventHandler<ActionEvent> {
-
-        @Override
-        public void handle(ActionEvent e)
-        {
-
-            if(e.getTarget().getClass().toString().equals("class javafx.scene.control.MenuItem")){
-
-                if(((MenuItem)e.getTarget()).getId().equals("add_menu_item"))
-                    System.out.println("Adding");
-                else if(((MenuItem) e.getTarget()).getId().equals("delete_menu_item")){
-                    System.out.println("Deleteing");
-                }
-            }
-        }
-    }
 }

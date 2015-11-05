@@ -10,13 +10,15 @@ public class Subject {
     private String name;
     private String description;
     private int position;
+    private String path;
     private boolean isAssociated;
     private ArrayList<Subject> subTopicList;
     private ArrayList<String> learningOutcomeList;
 
 
-    public Subject(){
-
+    public Subject(String name,String desc){
+        this.name = name;
+        this.description = desc;
     }
 
 
@@ -69,5 +71,16 @@ public class Subject {
     public void setPosition(int position)
     {
         this.position = position;
+    }
+
+
+    public String getPath()
+    {
+        return path;
+    }
+
+    public void setPath(String path)
+    {
+        this.path = path;
     }
 }

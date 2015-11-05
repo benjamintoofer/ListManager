@@ -124,12 +124,6 @@ public class ClassListView extends VBox{
 
             super.startEdit();
 
-            /*if(textField == null)
-                createTextField();
-
-            setText(null);
-            setGraphic(textField);
-            textField.selectAll();*/
             String oldName = getText();
             String newName = null;
             String newDesc = null;
@@ -143,12 +137,9 @@ public class ClassListView extends VBox{
                 newName = dialog.getClassName();
                 newDesc = dialog.getDesc();
                 model.modifyClass(oldName,newName,newDesc);
-                //model.addClassToList(new Class(name, desc));
             }else{
-                //setText(oldName);
                 this.cancelEdit();
             }
-            //setText(name);
 
         }
 

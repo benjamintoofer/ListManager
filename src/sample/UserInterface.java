@@ -154,6 +154,9 @@ public class UserInterface extends BorderPane implements Observer{
     public void update(Observable o, Object arg)
     {
         System.out.println(o.getClass().toString());
+        /*
+            Update Class list view when change has occured in Class list model
+         */
         if(o.getClass().toString().equals("class sample.ClassListModel")){
             if(arg.equals("add")){
                 ArrayList<Class> newClassList = classListModel.getClassList();
@@ -163,6 +166,13 @@ public class UserInterface extends BorderPane implements Observer{
                 ArrayList<Class> newClassList = classListModel.getClassList();
                 classListView.removeCourse(newClassList);
             }
+
+        }
+
+        /*
+            Update Subject tree view when change has occured in Subject tree model
+         */
+        if(o.getClass().toString().equals("class sample.SubjectTreeModel")){
 
         }
     }
