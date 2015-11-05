@@ -153,7 +153,7 @@ public class Tree<T> {
             }
             child.setParent(this);
             //Set the path of the new child with the parents plus the childs new position in the list
-            ((Subject)child.getData()).setPath(((Subject) this.getData()).getPath() + "." + (this.childIndex));
+            ((Subject)child.getData()).setPath("." + (this.childIndex)+((Subject) this.getData()).getPath());
             ((Subject)child.getData()).setPosition(this.childIndex);
             this.childIndex++;
             children.add(child);
