@@ -1,6 +1,6 @@
 package sample;
 
-import java.util.ArrayList;
+
 import java.util.Observable;
 
 /**
@@ -12,47 +12,69 @@ public class SubjectTreeModel extends Observable{
     private Subject childToAdd = null;
     private Subject childToRemove = null;
     private Subject childToModify = null;
-    Tree<Subject> tree;
+    private Tree<Subject> tree;
 
     public SubjectTreeModel(){
 
         init();
     }
 
+    //Initialize
     private void init(){
 
         rootNode = new Subject("Root","Root Desc");
         tree = new Tree<>(rootNode);
-        System.out.println(((Subject)tree.getRootElement().getData()).getPath());
-        System.out.println(tree.printTree());
     }
 
+    /*
+        All editing methods of the Tree
+
+        - addItem(parent,child) = finds the parent in te tree
+        and adds the passed in child to the parent object
+
+        - removeItem(child) = finds the passed in child and
+        removes it from the tree including its children
+
+        - modifyItem(obj, newName, newDesc) = find the Subject
+        object that is passed in and set its new Name and Description
+     */
     public void addItem(Subject parent, Subject child){
+
         childToAdd = child;
-        System.out.println("Parent: "+parent.getName());
         tree.addElement(parent, child);
 
+        //Notify observer: UI
         setChanged();
         notifyObservers("add");
     }
     public void removeItem(Subject child){
+
         tree.removeElement(child);
         childToRemove = child;
+
+        //Notify observer: UI
         setChanged();
         notifyObservers("remove");
     }
 
-    public void modifySubject(Subject obj,String newName, String newDesc){
+    public void modifyItem(Subject obj,String newName, String newDesc){
 
         Tree.Node<Subject> modifiedNode = tree.findNode(obj);
         modifiedNode.getData().setName(newName);
         modifiedNode.getData().setDescription(newDesc);
         childToModify = obj;
 
+        //Notify observer: UI
         setChanged();
         notifyObservers("modify");
     }
+    ////////////////////////////////////////////////////////////
+    /*
+        Called in the update methods of the Observer(UI) in order to
+        get the child objects are supposed to be removed, added, or
+        modified from its view
 
+     */
     public Subject getChildToAdd(){
         return childToAdd;
     }
@@ -64,12 +86,19 @@ public class SubjectTreeModel extends Observable{
     public Subject getChildToModify(){
         return childToModify;
     }
+////////////////////////////////////////////////////////////
 
-
+    /*
+        Print the current state of the tree
+     */
     public String printTree(){
         return tree.printTree();
     }
 
+    /*
+        Get the description of the subject that is looked
+        for from the model
+     */
     public String getDesc(Subject obj){
         return tree.findNode(obj).getData().getDescription();
     }

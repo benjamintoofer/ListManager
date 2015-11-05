@@ -4,13 +4,9 @@ package sample;
  * Created by benjamintoofer on 10/29/15.
  */
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.beans.property.SimpleStringProperty;
+
 
 import java.util.*;
-
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -42,8 +38,6 @@ public class UserInterface extends BorderPane implements Observer{
 
     //TreeView
     private TreeView<String> treeView;
-
-
 
 
     //Console View
@@ -100,6 +94,9 @@ public class UserInterface extends BorderPane implements Observer{
 
 
     }
+    /*
+        Getter for Window dimmensions
+     */
     public int getWinWidth()
     {
         return winWidth;
@@ -109,9 +106,10 @@ public class UserInterface extends BorderPane implements Observer{
     {
         return winHeight;
     }
-
-
-
+    //////////////////////////////////////////////////////
+    /*
+        Getter for ClassListView and SubjectTreeView
+     */
     public ClassListView getClassListView(){
 
         return classListView;
@@ -121,9 +119,11 @@ public class UserInterface extends BorderPane implements Observer{
 
         return subjectTreeView;
     }
+    //////////////////////////////////////////////////////
     /*
         Add Class Model and Controller
      */
+
     public void addClassListModel(ClassListModel model){
 
         classListModel = model;
@@ -135,7 +135,7 @@ public class UserInterface extends BorderPane implements Observer{
         classListView.getAddCourseButton().setOnAction(controller);
         classListView.getRemoveCourseButton().setOnAction(controller);
     }
-
+    //////////////////////////////////////////////////////
     /*
         Add Subject Tree Model and Controller
      */
@@ -149,19 +149,28 @@ public class UserInterface extends BorderPane implements Observer{
 
         subjectTreeView.getContextMenu().setOnAction(controller);
     }
-
+    //////////////////////////////////////////////////////
 
     /*
         Updated from Observables:
-         1.SubjectTreeModel
-         2.ClassListModel
+
+         o = Observable object:
+             1.SubjectTreeModel
+            2.ClassListModel
+         arg = Optional argument passed when observable notifies obevers
      */
     @Override
     public void update(Observable o, Object arg)
     {
 
         /*
-            Update Class list view when change has occured in Class list model
+            Update Class list view when change has occurred in ClassListModel
+
+           1. Check of observable object that notified is the ClassListModel
+           2. Determine argument, whether the ClassListView must
+                - add an item to its list
+                    (modifying an a item occurs here as well)
+                - remove an item from its list
          */
         if(o.getClass().toString().equals("class sample.ClassListModel")){
             if(arg.equals("add")){
@@ -177,25 +186,27 @@ public class UserInterface extends BorderPane implements Observer{
 
         /*
             Update Subject tree view when change has occurred in Subject tree model
+
+           1. Check of observable object that notified is the SubjectTreeModel
+           2. Determine argument, whether the SubjectTreeView must
+                - add an item to its tree
+                - remove an item from its tree
+                - modify an item in the tree
          */
         if(o.getClass().toString().equals("class sample.SubjectTreeModel")){
             if(arg.equals("add")){
-                //System.out.println(subjectTreeView.getSelectedTreeItem().getName());
+
                 subjectTreeView.addChildToTreeView(subjectTreeModel.getChildToAdd());
-                System.out.println(subjectTreeModel.printTree());
 
             }
             if(arg.equals("remove")){
-                System.out.println("Remove child");
-                subjectTreeView.removeChildFromTreeView(subjectTreeModel.getChildToRemove());
-                System.out.println("print tree");
-                System.out.println(subjectTreeModel.printTree());
 
+                subjectTreeView.removeChildFromTreeView(subjectTreeModel.getChildToRemove());
             }
 
             if(arg.equals("modify")){
+
                 subjectTreeView.modifyChildFromTreeView(subjectTreeModel.getChildToModify());
-                System.out.println(subjectTreeModel.printTree());
             }
         }
     }

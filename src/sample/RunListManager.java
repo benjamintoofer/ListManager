@@ -14,7 +14,7 @@ public class RunListManager {
 
     /*
         Called from main
-        Sets up al models,controllers, and views
+        Sets up all models,controllers, and views
      */
     public RunListManager(){
 

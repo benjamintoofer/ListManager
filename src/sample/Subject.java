@@ -5,6 +5,16 @@ import java.util.ArrayList;
 /**
  * Created by benjamintoofer on 11/1/15.
  */
+
+/*
+    Subject Attributes:
+
+    - name = Name of the subject
+    - description = Description of the subject
+    - position = Position of the subject relative to its parent subject
+    - path = Path of the subject relative to the root node
+ */
+
 public class Subject {
 
     private String name;
