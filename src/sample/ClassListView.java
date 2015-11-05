@@ -28,7 +28,7 @@ public class ClassListView extends VBox{
     private DialogBox dialog;
     private  VBox vBox;
     private HBox buttonBox;
-    private Button addCourseButton, removeCourseButton;
+    private Button addCourseButton, removeCourseButton,connectButton;
 
     public ClassListView(){
 
@@ -53,14 +53,16 @@ public class ClassListView extends VBox{
         addCourseButton.setId("add_course_button");
         removeCourseButton = new Button("-");
         removeCourseButton.setId("remove_course_button");
-        buttonBox.getChildren().addAll(addCourseButton,removeCourseButton);
+        connectButton = new Button("Connect");
+        connectButton.setId("connect_button");
+        buttonBox.getChildren().addAll(addCourseButton,removeCourseButton,connectButton);
 
 
         this.getChildren().addAll(listView, buttonBox);
 
         //////////
         dialog = new DialogBox(true);
-        dialog.setTitle("Class INformation");
+        dialog.setTitle("Class Information");
 
 
         ////////

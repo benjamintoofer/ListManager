@@ -8,9 +8,10 @@ import java.util.Observable;
  */
 public class SubjectTreeModel extends Observable{
 
-    Subject rootNode;
-    Subject childToAdd = null;
-    Subject childToRemove = null;
+    private Subject rootNode;
+    private Subject childToAdd = null;
+    private Subject childToRemove = null;
+    private Subject childToModify = null;
     Tree<Subject> tree;
 
     public SubjectTreeModel(){
@@ -29,7 +30,7 @@ public class SubjectTreeModel extends Observable{
     public void addItem(Subject parent, Subject child){
         childToAdd = child;
         System.out.println("Parent: "+parent.getName());
-        tree.addElement(parent,child);
+        tree.addElement(parent, child);
 
         setChanged();
         notifyObservers("add");
@@ -40,6 +41,18 @@ public class SubjectTreeModel extends Observable{
         setChanged();
         notifyObservers("remove");
     }
+
+    public void modifySubject(Subject obj,String newName, String newDesc){
+
+        Tree.Node<Subject> modifiedNode = tree.findNode(obj);
+        modifiedNode.getData().setName(newName);
+        modifiedNode.getData().setDescription(newDesc);
+        childToModify = obj;
+
+        setChanged();
+        notifyObservers("modify");
+    }
+
     public Subject getChildToAdd(){
         return childToAdd;
     }
@@ -48,7 +61,17 @@ public class SubjectTreeModel extends Observable{
         return childToRemove;
     }
 
+    public Subject getChildToModify(){
+        return childToModify;
+    }
+
+
     public String printTree(){
         return tree.printTree();
     }
+
+    public String getDesc(Subject obj){
+        return tree.findNode(obj).getData().getDescription();
+    }
 }
+

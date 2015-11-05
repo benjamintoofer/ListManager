@@ -19,6 +19,7 @@ public class SubjectTreeView extends VBox{
 
     private TreeView<Subject> treeView;
     private TreeItem<Subject> rootNode = new TreeItem<>();
+    private SubjectTreeModel model;
     private DialogBox addDialogBox;
     private final ContextMenu contextMenu = new ContextMenu();
 
@@ -62,6 +63,20 @@ public class SubjectTreeView extends VBox{
         treeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(temp);
 
     }
+
+    public void modifyChildFromTreeView(Subject child){
+
+        TreeItem<Subject> temp = treeView.getSelectionModel().getSelectedItem();
+        System.out.println(temp+"\n"+child);
+        temp.getValue().setName(child.getName());
+        temp.getValue().setDescription(child.getDescription());
+
+    }
+
+    public void addModel(SubjectTreeModel model){
+        this.model = model;
+    }
+
     private class CustomTreeCell extends TreeCell<Subject> {//MUST BE OF TYPE SUBJECT
 
 
@@ -88,8 +103,8 @@ public class SubjectTreeView extends VBox{
         @Override
         public void startEdit(){
 
-            /*super.startEdit();
-            System.out.println("Start edit");
+            super.startEdit();
+            /*System.out.println("Start edit");
             if(textField == null)
                 createTextField();
 
@@ -100,7 +115,7 @@ public class SubjectTreeView extends VBox{
             String newName = null;
             String newDesc = null;
             addDialogBox.setClassTextField(oldName);
-            addDialogBox.setDescTextField("");
+            addDialogBox.setDescTextField(model.getDesc(this.getItem()));
             Optional<ButtonType> result = addDialogBox.showAndWait();
 
             if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
@@ -108,6 +123,9 @@ public class SubjectTreeView extends VBox{
 
                 newName = addDialogBox.getClassName();
                 newDesc = addDialogBox.getDesc();
+                this.getItem().setName(newName);
+                this.getItem().setDescription(newDesc);
+                model.modifySubject(this.getItem(),newName,newDesc);
                 //model.modifyClass(oldName,newName,newDesc);
                 //model.addClassToList(new Class(name, desc));
             }else{

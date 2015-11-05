@@ -94,6 +94,7 @@ public class UserInterface extends BorderPane implements Observer{
 
         //Instantiate Text Area
         textArea = new TextArea();
+        textArea.setPrefSize(winWidth,winHeight*.3);
 
         this.setBottom(textArea);
 
@@ -141,6 +142,7 @@ public class UserInterface extends BorderPane implements Observer{
     public void addSubjectTreeModel(SubjectTreeModel model){
 
         subjectTreeModel = model;
+        subjectTreeView.addModel(model);
     }
 
     public void addSubjectTreeController(SubjectTreeController controller){
@@ -189,6 +191,11 @@ public class UserInterface extends BorderPane implements Observer{
                 System.out.println("print tree");
                 System.out.println(subjectTreeModel.printTree());
 
+            }
+
+            if(arg.equals("modify")){
+                subjectTreeView.modifyChildFromTreeView(subjectTreeModel.getChildToModify());
+                System.out.println(subjectTreeModel.printTree());
             }
         }
     }
