@@ -1,12 +1,14 @@
 package sample;
 
 
+import java.util.ArrayList;
 import java.util.Observable;
+import java.io.Serializable;
 
 /**
  * Created by benjamintoofer on 11/4/15.
  */
-public class SubjectTreeModel extends Observable{
+public class SubjectTreeModel extends Observable implements Serializable{
 
     private Subject rootNode;
     private Subject childToAdd = null;
@@ -26,6 +28,47 @@ public class SubjectTreeModel extends Observable{
         tree = new Tree<>(rootNode);
     }
 
+    public void setSubjectAssociated(Subject subject, boolean value){
+
+        Tree.Node<Subject> foundNode = tree.findNode(subject);
+
+        int numAss = foundNode.getData().getNumberOfAssociationsMade();
+        if(!value){
+
+            if(numAss > 0)
+                foundNode.getData().setNumberOfAssociationsMade(numAss - 1);
+
+        }else{
+            foundNode.getData().setNumberOfAssociationsMade(numAss + 1);
+        }
+
+        if(foundNode.getData().getNumberOfAssociationsMade() == 0){
+            foundNode.getData().setAssociated(false);
+        }else{
+            foundNode.getData().setAssociated(true);
+        }
+
+        int counter = 0;
+
+        for(Tree.Node<Subject> n : foundNode.getChildren()){
+            if(n.getData().isAssociated()){
+                counter++;
+            }
+        }
+
+        foundNode.getData().setNumberOfChildrenAssociated(counter);
+
+
+    }
+    public void updateTreeColorAssociation(Subject s){
+
+        tree.updateParentAssociations(s);
+    }
+
+    public ArrayList<Subject> getChildrenFromNode(Subject subject){
+
+        return tree.getChildrenFromObject(subject);
+    }
     /*
         All editing methods of the Tree
 
@@ -42,6 +85,7 @@ public class SubjectTreeModel extends Observable{
 
         childToAdd = child;
         tree.addElement(parent, child);
+        tree.updateParentAssociations(child);
 
         //Notify observer: UI
         setChanged();
@@ -49,6 +93,7 @@ public class SubjectTreeModel extends Observable{
     }
     public void removeItem(Subject child){
 
+        tree.updateParentAssociations(child);
         tree.removeElement(child);
         childToRemove = child;
 

@@ -6,14 +6,12 @@ package sample;
 
 
 
+
+
 import java.util.*;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.control.ListView;
+import javafx.stage.FileChooser;
 import javafx.scene.control.TextArea;
 
 public class UserInterface extends BorderPane implements Observer{
@@ -28,6 +26,9 @@ public class UserInterface extends BorderPane implements Observer{
     //Models
     private ClassListModel classListModel;
     private SubjectTreeModel subjectTreeModel;
+    private AssociationModel associationModel;
+
+    private IOController ioController;
 
     //Menu Bar
     private MenuBar menuBar;
@@ -35,6 +36,7 @@ public class UserInterface extends BorderPane implements Observer{
     private MenuItem saveMenuItem;
     private MenuItem saveAsMenuItem;
     private MenuItem openMenuItem;
+
 
     //TreeView
     private TreeView<String> treeView;
@@ -54,10 +56,15 @@ public class UserInterface extends BorderPane implements Observer{
 
     private void init(){
 
+        ioController = new IOController();
+
         //Instantiate Menu Items
         saveMenuItem = new MenuItem("Save");
         saveAsMenuItem = new MenuItem("Save As...");
         openMenuItem = new MenuItem("Open...");
+        saveAsMenuItem.setOnAction(ioController);
+        saveMenuItem.setOnAction(ioController);
+        openMenuItem.setOnAction(ioController);
 
         //Instantiate Menu
         fileMenu = new Menu("File");
@@ -88,6 +95,7 @@ public class UserInterface extends BorderPane implements Observer{
 
         //Instantiate Text Area
         textArea = new TextArea();
+        textArea.setEditable(false);
         textArea.setPrefSize(winWidth,winHeight*.3);
 
         this.setBottom(textArea);
@@ -150,6 +158,19 @@ public class UserInterface extends BorderPane implements Observer{
         subjectTreeView.getContextMenu().setOnAction(controller);
     }
     //////////////////////////////////////////////////////
+    /*
+        Add Association Model and Controller
+     */
+    public void addAssociationController(AssociationController controller){
+
+        classListView.getConnectButton().setOnAction(controller);
+        classListView.getDisconnectButton().setOnAction(controller);
+    }
+
+    public void addAssociationModel(AssociationModel model){
+
+        associationModel = model;
+    }
 
     /*
         Updated from Observables:
@@ -174,10 +195,12 @@ public class UserInterface extends BorderPane implements Observer{
          */
         if(o.getClass().toString().equals("class sample.ClassListModel")){
             if(arg.equals("add")){
+
                 ArrayList<Class> newClassList = classListModel.getClassList();
                 classListView.addClasses(newClassList);
             }
             if(arg.equals("remove")){
+
                 ArrayList<Class> newClassList = classListModel.getClassList();
                 classListView.removeCourse(newClassList);
             }
@@ -197,16 +220,32 @@ public class UserInterface extends BorderPane implements Observer{
             if(arg.equals("add")){
 
                 subjectTreeView.addChildToTreeView(subjectTreeModel.getChildToAdd());
+                System.out.println(subjectTreeModel.printTree());
 
             }
             if(arg.equals("remove")){
 
                 subjectTreeView.removeChildFromTreeView(subjectTreeModel.getChildToRemove());
+                System.out.println(subjectTreeModel.printTree());
             }
 
             if(arg.equals("modify")){
 
                 subjectTreeView.modifyChildFromTreeView(subjectTreeModel.getChildToModify());
+                subjectTreeView.updateTree();
+                System.out.println(subjectTreeModel.printTree());
+            }
+        }
+
+        if(o.getClass().toString().equals("class sample.AssociationModel")){
+
+            if(arg.equals("add")){
+
+                String className = associationModel.getAddedAssociation().getClassObj().getClassName();
+                String subjectName = associationModel.getAddedAssociation().getSubjectObj().getName();
+                subjectTreeView.updateTree();
+                textArea.setText("Association just created between Class: "+className+" with Subject: "+subjectName);
+
             }
         }
     }

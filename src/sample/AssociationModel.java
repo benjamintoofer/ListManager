@@ -7,13 +7,16 @@ package sample;
 
 import java.util.ArrayList;
 import java.util.Observable;
+import java.io.Serializable;
 
 /**
  *
  * @author Mans
  */
-public class AssociationModel  extends Observable
+public class AssociationModel  extends Observable implements Serializable
 {
+    private Association addedAssoc = null;
+
     public AssociationModel()
      {
          init();       
@@ -23,20 +26,149 @@ public class AssociationModel  extends Observable
     public void init()
     {
         associationList = new ArrayList<Association>();
+
     }
-    public void addAssociation(Association s)
+    public boolean addAssociation(Association s)
     {
+        boolean result = true;
+
+        for(Association a: associationList){
+
+            if((a.getSubjectObj().equals(s.getSubjectObj())) && (a.getClassObj().equals(s.getClassObj()))){
+                System.out.println("Same assoc");
+                result =  false;
+            }
+        }
+
         associationList.add(s);
+        addedAssoc = s;
         setChanged();
-        notifyObservers();
+        notifyObservers("add");
+
+        return result;
     }
     /*public Association getAssociation()
     {
         
     }*/
-    public void removeAssociation(Association s)
+    public boolean removeAssociation(Subject s)
     {
-        
+        boolean result = true;
+        ArrayList<Association> listToRemove = new ArrayList<Association>();
+
+        for(Association a : associationList){
+            if(a.getSubjectObj().equals(s)){
+
+                listToRemove.add(a);
+            }
+        }
+
+        if(listToRemove.isEmpty()){
+            result = false;
+        }else {
+            for (Association a : listToRemove) {
+                associationList.remove(a);
+            }
+        }
+
+        return result;
+    }
+
+    public boolean removeAssociation(Subject s,Class c){
+
+        boolean result = true;
+        ArrayList<Association> listToRemove = new ArrayList<Association>();
+
+        for(Association a : associationList){
+            if(a.getSubjectObj().equals(s) && a.getClassObj().equals(c)){
+                System.out.println("Removing Assoc: "+a.getSubjectObj()+" "+a.getClassObj());
+                listToRemove.add(a);
+            }
+        }
+
+        if(listToRemove.isEmpty()){
+            result = false;
+        }else {
+            for (Association a : listToRemove) {
+                associationList.remove(a);
+            }
+        }
+
+        return result;
+    }
+
+    public boolean removeAssociation(Class c){
+
+        boolean result = true;
+        ArrayList<Association> listToRemove = new ArrayList<Association>();
+
+        for(Association a : associationList){
+            if( a.getClassObj().equals(c)){
+
+                listToRemove.add(a);
+            }
+        }
+
+        if(listToRemove.isEmpty()){
+            result = false;
+        }else {
+            for (Association a : listToRemove) {
+                associationList.remove(a);
+            }
+        }
+
+        return result;
+    }
+
+    public ArrayList<Association> queryByClass(String className){
+
+        ArrayList<Association> newList = new ArrayList<Association>();
+
+        if(associationList == null){
+            associationList = new ArrayList<Association>();
+        }
+
+        for(Association a: associationList){
+
+            if(a.getClassObj().getClassName().equals(className)){
+                newList.add(a);
+            }
+        }
+        return newList;
+    }
+
+    public ArrayList<Association> queryBySubject(String subjectName){
+
+        ArrayList<Association> newList = new ArrayList<Association>();
+
+        if(associationList == null){
+            associationList = new ArrayList<Association>();
+        }
+
+        for(Association a: associationList){
+
+            if(a.getSubjectObj().getName().equals(subjectName)){
+
+                newList.add(a);
+            }
+        }
+
+        return newList;
+    }
+
+    public Association getAddedAssociation(){
+        return  addedAssoc;
+    }
+    public String printAssociations(){
+
+        StringBuilder returnString = new StringBuilder();
+
+        for(Association a: associationList){
+
+            returnString.append("Class: "+a.getClassObj().getClassName()+" Subject: "+a.getSubjectObj().getName()+"\n");
+        }
+
+        return returnString.toString();
     }
     
 }

@@ -23,12 +23,16 @@ public class Tree<T> {
             Set the roots nodes position and path
             initialize its children list
          */
+
         ((Subject)root).setPosition(0);
+        ((Subject) root).setCurrentColor(null);
         rootNode = new Node(root);
         rootNode.children = new ArrayList<Node<T>>();
         int rootPosition = ((Subject)rootNode.getData()).getPosition();
         ((Subject)rootNode.getData()).setPath("."+rootPosition);
+
     }
+
 
     /*
         Get root node of the tree
@@ -36,6 +40,78 @@ public class Tree<T> {
     public Node getRootElement() {
 
         return this.rootNode;
+    }
+    public ArrayList<T> getChildrenFromObject(T obj){
+
+        Node<T> node = findNode(obj);
+        ArrayList<T> list = new ArrayList<T>();
+
+        return getChildrenFromObject(node,list);
+
+    }
+
+    private ArrayList<T> getChildrenFromObject(Node<T> node, ArrayList<T> list){
+
+
+
+        for(Node<T> n : node.getChildren()){
+            getChildrenFromObject(n,list);
+        }
+        list.add(node.getData());
+
+        return list;
+    }
+
+    public ArrayList<T> getLeavesFromObject(T obj){
+
+        Node<T> node = findNode(obj);
+        ArrayList<T> list = new ArrayList<T>();
+
+        return getLeavesFromObject(node, list);
+    }
+
+    private ArrayList<T> getLeavesFromObject(Node<T> node, ArrayList<T> list){
+
+        if(((Subject)node.getData()).isLeaf()){
+            list.add(node.getData());
+            //return list;
+        }else{
+
+            for(Node<T> n : node.getChildren()){
+                getChildrenFromObject(n,list);
+            }
+        }
+        return list;
+    }
+
+    public void updateParentAssociations(T t){
+
+        Node<T> node = findNode(t);
+        updateParentAssociations(node.getParent());
+    }
+
+    private void updateParentAssociations(Node<T> node){
+
+        if(node  != null){
+
+            int counter = 0;
+            for(Node<T> n : node.getChildren()){
+                if(!((Subject)n.getData()).isLeaf()){
+                    if(((Subject)n.getData()).getNumberOfChildrenAssociated() == ((Subject)n.getData()).getNumberOfChildren()){
+                        counter++;
+                    }
+                }else{
+                    if(((Subject)n.getData()).isAssociated()){
+                        counter++;
+                    }
+
+                }
+
+            }
+            ((Subject)node.getData()).setNumberOfChildrenAssociated(counter);
+            System.out.println("Node Name: "+((Subject)node.getData()).getName()+" "+((Subject)node.getData()).getNumberOfChildrenAssociated());
+            updateParentAssociations(node.getParent());
+        }
     }
     ////////////////////////////////////////////////////
     /*
@@ -49,6 +125,7 @@ public class Tree<T> {
         Node<T> childToFind = findNode(element);
         Node<T> addNode = new Node<T>(newChildToAdd);
 
+        ((Subject)childToFind.getData()).setLeaf(false);
         childToFind.addChild(addNode);
 
         return newChildToAdd;
@@ -65,9 +142,17 @@ public class Tree<T> {
 
         Node<T> childToFind = findNode(element);
 
+
         if(childToFind.getParent() != null){
 
+            //If parent has 1 child then set it as a leaf since last child is about to be removed
+            if(childToFind.getParent().getNumberOfChildren() == 1){
+
+                ((Subject)childToFind.getParent().getData()).setLeaf(true);
+            }
             childToFind.getParent().getChildren().remove(childToFind);
+            System.out.println(((Subject)childToFind.getData()).getName());
+            ((Subject)childToFind.getParent().getData()).decrementNumberOfChildren();
         }
 
     }
@@ -167,9 +252,9 @@ public class Tree<T> {
             tab = tab+"\t";
         }
         if(node.getNumberOfChildren() == 0){
-            string.append("\n"+tab+node.toString()+" "+((Subject)node.getData()).getPath());
+            string.append("\n"+tab+"- "+node.toString()+" "+((Subject)node.getData()).getNumberOfChildrenAssociated()+"/"+((Subject)node.getData()).getNumberOfChildren()+" "+((Subject)node.getData()).isAssociated());
         }else{
-            string.append("\n"+tab+node.toString()+" "+((Subject)node.getData()).getPath());
+            string.append("\n"+tab+"- "+node.toString()+" "+((Subject)node.getData()).getNumberOfChildrenAssociated()+"/"+((Subject)node.getData()).getNumberOfChildren()+" "+((Subject)node.getData()).isAssociated());
 
             for(Node<T> n: node.getChildren()){
 
@@ -229,6 +314,7 @@ public class Tree<T> {
             child.setParent(this);
             ((Subject)child.getData()).setPath("." + (this.childIndex)+((Subject) this.getData()).getPath());
             ((Subject)child.getData()).setPosition(this.childIndex);
+            ((Subject)this.getData()).incrementNumberOfChildren();
             this.childIndex++;
             children.add(child);
         }

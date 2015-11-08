@@ -2,7 +2,13 @@ package sample;
 
 
 import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
+
 import java.util.Optional;
 
 /**
@@ -29,11 +35,12 @@ public class SubjectTreeView extends VBox{
         root.setPath(".0");
         rootNode.setValue(root);
         treeView = new TreeView<>((TreeItem<Subject>) rootNode);
-        treeView.setPrefSize(400,900);
+        treeView.setPrefSize(400, 900);
         treeView.setEditable(true);
         treeView.setCellFactory((TreeView<Subject> p) -> new CustomTreeCell());
-        addDialogBox = new DialogBox(true);
+        addDialogBox = new DialogBox("Subject",true);
         this.getChildren().add(treeView);
+
     }
 
     public ContextMenu getContextMenu(){
@@ -42,18 +49,45 @@ public class SubjectTreeView extends VBox{
 
     public Subject getSelectedTreeItem(){
 
-        return treeView.getSelectionModel().getSelectedItem().getValue();
+        if(treeView.getSelectionModel().getSelectedItem() != null){
+
+            return treeView.getSelectionModel().getSelectedItem().getValue();
+
+        }else{
+
+
+            return null;
+        }
+
+    }
+
+    public TreeItem<Subject> getTreeItem(){
+        return treeView.getSelectionModel().getSelectedItem();
+    }
+
+
+
+    public TreeView<Subject> getTreeView(){
+        return treeView;
     }
 
     public void addChildToTreeView(Subject child){
+
         treeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<Subject>(child));
+        System.out.println("Parent that is adding "+treeView.getSelectionModel().getSelectedItem().getValue().getName()+"Child being added: "+child.getName());
 
     }
 
     public void removeChildFromTreeView(Subject child){
 
         TreeItem<Subject> temp = treeView.getSelectionModel().getSelectedItem();
-        treeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(temp);
+
+        if(treeView.getSelectionModel().getSelectedItem().getParent() != null){
+            treeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(temp);
+        }else{
+            System.err.println("Error Node:"+treeView.getSelectionModel().getSelectedItem().getValue().getName()+" has null parent and cannot be removed");
+        }
+
 
     }
 
@@ -63,8 +97,17 @@ public class SubjectTreeView extends VBox{
         System.out.println(temp+"\n"+child);
         temp.getValue().setName(child.getName());
         temp.getValue().setDescription(child.getDescription());
+        //this.treeView.edit(temp);
+
+
 
     }
+
+    public void updateTree(){
+        treeView.refresh();
+    }
+
+
 
     public void addModel(SubjectTreeModel model){
         this.model = model;
@@ -79,6 +122,8 @@ public class SubjectTreeView extends VBox{
             //Initialize
             init();
         }
+
+
         private void init(){
 
             //Add items to ContextMenu and set ID's for items
@@ -97,6 +142,7 @@ public class SubjectTreeView extends VBox{
 
             super.startEdit();
 
+             System.out.println("Start Edit");
             String oldName = getText();
             String newName = null;
             String newDesc = null;
@@ -110,7 +156,28 @@ public class SubjectTreeView extends VBox{
                 newDesc = addDialogBox.getDesc();
                 this.getItem().setName(newName);
                 this.getItem().setDescription(newDesc);
-                model.modifyItem(this.getItem(),newName,newDesc);
+
+                model.modifyItem(this.getItem(), newName, newDesc);
+
+                Circle circle = new Circle(10);
+                Text text;
+                if(this.getItem().isLeaf()){
+
+                    if(this.getItem().getNumberOfAssociationsMade() == 0)
+                        text = new Text("");
+                    else
+                        text = new Text(this.getItem().getNumberOfAssociationsMade()+"");
+
+                }else{
+                    text = new Text (this.getItem().getNumberOfChildrenAssociated()+"/"+this.getItem().getNumberOfChildren());
+                }
+                text.setBoundsType(TextBoundsType.VISUAL);
+                StackPane stack = new StackPane();
+                stack.getChildren().add(circle);
+                stack.getChildren().add(text);
+                circle.setFill(this.getTreeItem().getValue().getCurrentColor());
+                setGraphic(stack);
+
 
             }else{
 
@@ -123,8 +190,6 @@ public class SubjectTreeView extends VBox{
 
             super.cancelEdit();
 
-            setText(getItem().getName());
-            setGraphic(getTreeItem().getGraphic());
 
         }
 
@@ -140,15 +205,36 @@ public class SubjectTreeView extends VBox{
                 if(isEditing()){
 
                     setText(null);
+                    Circle circle = new Circle(10);
+
+                    circle.setFill(this.getTreeItem().getValue().getCurrentColor());
+
+
+                    setGraphic(circle);
                 }else{
                     setText(getString());
-                    setGraphic(getTreeItem().getGraphic());
 
-                    if (!getTreeItem().isLeaf() && getTreeItem().getParent()!= null){
-                        setContextMenu(contextMenu);
-                    }else if(getTreeItem().isLeaf()){
-                        setContextMenu(contextMenu);
+
+                    Circle circle = new Circle(10);
+                    Text text;
+                    if(this.getItem().isLeaf()){
+
+                        if(this.getItem().getNumberOfAssociationsMade() == 0)
+                            text = new Text("");
+                        else
+                            text = new Text(this.getItem().getNumberOfAssociationsMade()+"");
+
+                    }else{
+                        text = new Text (this.getItem().getNumberOfChildrenAssociated()+"/"+this.getItem().getNumberOfChildren());
                     }
+                    text.setBoundsType(TextBoundsType.VISUAL);
+                    StackPane stack = new StackPane();
+                    stack.getChildren().add(circle);
+                    stack.getChildren().add(text);
+                    circle.setFill(this.getTreeItem().getValue().getCurrentColor());
+                    setGraphic(stack);
+
+                    setContextMenu(contextMenu);
                 }
             }
         }

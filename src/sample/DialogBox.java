@@ -9,6 +9,8 @@ import javafx.scene.control.Dialog;
  */
 public class DialogBox extends Dialog{
 
+    String category = null;
+
     Label classLabel = new Label("Name:");
     Label descLabel = new Label("Description:");
 
@@ -24,8 +26,10 @@ public class DialogBox extends Dialog{
     GridPane gridPane = new GridPane();
 
 
-    public DialogBox(boolean withFields){
+    public DialogBox(String category, boolean withFields){
         super();
+
+        this.category = category;
 
         if(withFields)
             initWithFields();
@@ -35,8 +39,8 @@ public class DialogBox extends Dialog{
 
     private void initWithFields(){
 
-        this.setTitle("Class Information");
-        this.setHeaderText("Enter Class information");
+        this.setTitle(category+" Information");
+        this.setHeaderText("Enter "+category+" information");
         this.getDialogPane().getButtonTypes().addAll(doneButton,cancelButton);
 
         gridPane.add(classLabel,1,1);
@@ -52,8 +56,8 @@ public class DialogBox extends Dialog{
 
     private void initWithOutFields(){
 
-        this.setTitle("Remove Class");
-        this.setHeaderText("Are you sure you would like to remove class?");
+        this.setTitle("Remove "+category);
+        this.setHeaderText("Are you sure you would like to remove "+category+"?");
         this.getDialogPane().getButtonTypes().addAll(yesButton,noButton);
 
     }

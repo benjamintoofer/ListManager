@@ -10,6 +10,8 @@ public class RunListManager {
     private ClassListModel classListModel;
     private SubjectTreeController subjectTreeController;
     private SubjectTreeModel subjectTreeModel;
+    private AssociationModel associationModel;
+    private AssociationController associationController;
 
 
     /*
@@ -28,17 +30,25 @@ public class RunListManager {
         classListController = new ClassListController();
         classListModel = new ClassListModel();
 
+        associationModel = new AssociationModel();
+        associationController = new AssociationController();
 
+        classListController.addClassListModel(classListModel);
+        classListController.addAssociationModel(associationModel);
+        classListController.addClassListView(uiView.getClassListView());
 
-
-        classListController.addModel(classListModel);
-        classListController.addView(uiView.getClassListView());
 
         subjectTreeController = new SubjectTreeController();
         subjectTreeModel = new SubjectTreeModel();
 
-        subjectTreeController.addModel(subjectTreeModel);
-        subjectTreeController.addView(uiView.getSubjectTreeView());
+        subjectTreeController.addSubjectTreeModel(subjectTreeModel);
+        subjectTreeController.addAssociationModel(associationModel);
+        subjectTreeController.addSubjectTreeView(uiView.getSubjectTreeView());
+
+        associationController.addAssociationModel((associationModel));
+        associationController.addSubjectTreeModel(subjectTreeModel);
+        associationController.addClassListView((uiView.getClassListView()));
+        associationController.addSubjectTreeView(uiView.getSubjectTreeView());
 
         uiView.addClassListController(classListController);
         uiView.addClassListModel(classListModel);
@@ -46,9 +56,13 @@ public class RunListManager {
         uiView.addSubjectTreeController(subjectTreeController);
         uiView.addSubjectTreeModel(subjectTreeModel);
 
+        uiView.addAssociationController(associationController);
+        uiView.addAssociationModel(associationModel);
+
         //Adding observers
         classListModel.addObserver(uiView);
         subjectTreeModel.addObserver(uiView);
+        associationModel.addObserver(uiView);
 
 
     }

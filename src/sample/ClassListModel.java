@@ -1,5 +1,6 @@
 package sample;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -8,7 +9,7 @@ import java.util.Observable;
 /**
  * Created by benjamintoofer on 11/2/15.
  */
-public class ClassListModel extends Observable{
+public class ClassListModel extends Observable implements Serializable{
 
     private ArrayList<Class> classList;
 
@@ -89,6 +90,18 @@ public class ClassListModel extends Observable{
         }
 
         return false;
+    }
+
+    public Class getClassByName(String className){
+
+        for(Class c : classList){
+
+            if(c.getClassName().equals(className)){
+
+                return c;
+            }
+        }
+        return null;
     }
 
     public ArrayList<Class> getClassList(){

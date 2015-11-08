@@ -28,7 +28,7 @@ public class ClassListView extends VBox{
     private DialogBox dialog;
     private  VBox vBox;
     private HBox buttonBox;
-    private Button addCourseButton, removeCourseButton,connectButton;
+    private Button addCourseButton, removeCourseButton,connectButton,disconnectButton;
 
     public ClassListView(){
 
@@ -41,27 +41,37 @@ public class ClassListView extends VBox{
         listView =  new ListView<String>();
         listView.setEditable(true);
         listView.setPrefSize(300,900);
-        ObservableList<String> tempItems = FXCollections.observableArrayList("COMP2730", "COMP2400", "COMP3351", "COMP3381");
-        //listView.setItems(tempItems);
         listView.setCellFactory((ListView<String> l)->new CustomClassListCell());
 
 
 
         //Instantiate add and remove course buttons
         buttonBox = new HBox();
+
+        //Add Course Button
         addCourseButton = new Button("+");
         addCourseButton.setId("add_course_button");
+        addCourseButton.setPrefWidth(30);
+
+        //Remove Course Button
         removeCourseButton = new Button("-");
         removeCourseButton.setId("remove_course_button");
+
+        //Connect Button
         connectButton = new Button("Connect");
         connectButton.setId("connect_button");
-        buttonBox.getChildren().addAll(addCourseButton,removeCourseButton,connectButton);
+
+        //Disconnect Button
+        disconnectButton = new Button("Disconnect");
+        disconnectButton.setId("disconnect_button");
+
+        buttonBox.getChildren().addAll(addCourseButton,removeCourseButton,connectButton,disconnectButton);
 
 
         this.getChildren().addAll(listView, buttonBox);
 
         //////////
-        dialog = new DialogBox(true);
+        dialog = new DialogBox("Class",true);
         dialog.setTitle("Class Information");
 
 
@@ -80,6 +90,15 @@ public class ClassListView extends VBox{
 
 
     }
+
+    /*
+        Getters for Buttons:
+
+            - addCourseButton
+            - removeCourseButton
+            - connectButton
+            - disconnectButton
+     */
     public Button getAddCourseButton(){
 
         return addCourseButton;
@@ -90,20 +109,33 @@ public class ClassListView extends VBox{
         return removeCourseButton;
     }
 
-    public String getSelectedClass(){
+    public Button getConnectButton(){
+
+        return connectButton;
+    }
+
+    public Button getDisconnectButton(){
+
+        return disconnectButton;
+    }
+
+    public String getSelectedClassByString(){
         return listView.getSelectionModel().getSelectedItem();
+    }
+
+    public Class getSelectedClass(String name){
+
+        return model.getClassByName(name);
     }
     public void addClasses(ArrayList<Class> list){
 
         listView.getItems().removeAll(listView.getItems());
-        ArrayList<String> newList = new ArrayList<>();
+        ArrayList<String> newList = new ArrayList<String>();
         for(Class c: list){
 
             newList.add(c.getClassName());
         }
         listView.getItems().addAll(newList);
-        //System.out.println(model);
-        System.out.println(model.getClassList().size());
     }
 
     public void addModel(ClassListModel model){

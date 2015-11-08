@@ -2,27 +2,34 @@ package sample;
 
 public class Association {
 
-	public int subjectID;
-	public Class assClass;
+	public Subject subjectObj;
+	public Class classObj;
 	
 	
-	public Association(){
-		
+	public Association(Class classObj, Subject subjectObj){
+
+        this.classObj = classObj;
+        this.subjectObj = subjectObj;
 	}
 	
-	public int getSubjectID() {
-		return subjectID;
-	}
-	public void setSubjectID(int subjectID) {
-		this.subjectID = subjectID;
-	}
-	public Class getAssClass() {
-		return assClass;
-	}
-	public void setAssClass(Class assClass) {
-		this.assClass = assClass;
-	}
-	
+    public Subject getSubjectObj(){
+
+        return subjectObj;
+    }
+
+    public void setSubjectObj(Subject obj){
+
+        subjectObj = obj;
+    }
+
+    public Class getClassObj(){
+
+        return classObj;
+    }
+    public void setClassObj(Class obj){
+
+        classObj = obj;
+    }
 	
 	
 }

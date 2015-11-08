@@ -16,9 +16,11 @@ import java.util.Optional;
 public class ClassListController implements EventHandler<ActionEvent> {
 
     private ClassListModel classListModel;
+    private AssociationModel associationModel;
+
     private ClassListView classListView;
-    private DialogBox addClassDialogBox = new DialogBox(true);
-    private DialogBox removeClassDialogBox = new DialogBox(false);
+    private DialogBox addClassDialogBox = new DialogBox("Class",true);
+    private DialogBox removeClassDialogBox = new DialogBox("Class",false);
 
     @Override
     public void handle(ActionEvent e)
@@ -40,30 +42,36 @@ public class ClassListController implements EventHandler<ActionEvent> {
 
             }else if(((Button) e.getTarget()).getId().equals("remove_course_button")){
 
-                if(classListView.getSelectedClass() != null){
+                if(classListView.getSelectedClassByString() != null){
 
-                    removeClassDialogBox.setDialogContentText(classListView.getSelectedClass());
+                    removeClassDialogBox.setDialogContentText(classListView.getSelectedClassByString());
                     Optional<ButtonType> result = removeClassDialogBox.showAndWait();
 
                     if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
-                        classListModel.removeClassFromList(classListView.getSelectedClass());
+
+                        String className = classListView.getSelectedClassByString();
+                        Class c = classListModel.getClassByName(className);
+
+                        associationModel.removeAssociation(c);
+                        classListModel.removeClassFromList(classListView.getSelectedClassByString());
                     }
-                }else{
-                    System.out.println("Nothing selected");
-
                 }
-
 
             }
         }
     }
 
-    public void addView(ClassListView view){
+    public void addClassListView(ClassListView view){
 
         classListView = view;
     }
 
-    public void addModel(ClassListModel model){
+    public void addAssociationModel(AssociationModel model){
+
+        associationModel = model;
+    }
+
+    public void addClassListModel(ClassListModel model){
 
         classListModel = model;
     }
