@@ -8,13 +8,14 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by benjamintoofer on 11/5/15.
  */
 
-public class AssociationController implements EventHandler<ActionEvent>{
+public class AssociationController implements EventHandler<ActionEvent>, Serializable{
 
     private AssociationModel associationModel;
     private SubjectTreeModel subjectTreeModel;
@@ -47,7 +48,7 @@ public class AssociationController implements EventHandler<ActionEvent>{
 
                     } else {
 
-                        childrenList = subjectTreeModel.getChildrenFromNode(selectedSubject);
+                        childrenList = subjectTreeModel.getChildrenFromNodePostOrder(selectedSubject);
                         for (Subject s : childrenList) {
 
                             success = associationModel.addAssociation(new Association(selectedClass, s));
@@ -86,7 +87,7 @@ public class AssociationController implements EventHandler<ActionEvent>{
 
                     }else{
 
-                        ArrayList<Subject> childrenList = subjectTreeModel.getChildrenFromNode(selectedSubject);
+                        ArrayList<Subject> childrenList = subjectTreeModel.getChildrenFromNodePostOrder(selectedSubject);
 
                         for(Subject s: childrenList){
 

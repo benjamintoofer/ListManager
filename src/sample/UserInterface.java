@@ -8,16 +8,19 @@ package sample;
 
 
 
+import java.io.Serializable;
 import java.util.*;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.stage.FileChooser;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 
-public class UserInterface extends BorderPane implements Observer{
+public class UserInterface extends BorderPane implements Observer,Serializable{
 
     private int winWidth;
     private int winHeight;
+
+    private transient Stage stage;
 
     //Views
     private ClassListView classListView;
@@ -28,22 +31,17 @@ public class UserInterface extends BorderPane implements Observer{
     private SubjectTreeModel subjectTreeModel;
     private AssociationModel associationModel;
 
-    private IOController ioController;
 
     //Menu Bar
-    private MenuBar menuBar;
-    private Menu fileMenu;
-    private MenuItem saveMenuItem;
-    private MenuItem saveAsMenuItem;
-    private MenuItem openMenuItem;
-
-
-    //TreeView
-    private TreeView<String> treeView;
+    private transient MenuBar menuBar;
+    private transient Menu fileMenu;
+    private transient MenuItem saveMenuItem;
+    private transient MenuItem saveAsMenuItem;
+    private transient MenuItem openMenuItem;
 
 
     //Console View
-    private TextArea textArea;
+    private transient TextArea textArea;
 
     public UserInterface(int width,int height){
 
@@ -56,15 +54,14 @@ public class UserInterface extends BorderPane implements Observer{
 
     private void init(){
 
-        ioController = new IOController();
 
         //Instantiate Menu Items
         saveMenuItem = new MenuItem("Save");
+        saveMenuItem.setId("save_item");
         saveAsMenuItem = new MenuItem("Save As...");
+        saveAsMenuItem.setId("save_as_item");
         openMenuItem = new MenuItem("Open...");
-        saveAsMenuItem.setOnAction(ioController);
-        saveMenuItem.setOnAction(ioController);
-        openMenuItem.setOnAction(ioController);
+        openMenuItem.setId("open_item");
 
         //Instantiate Menu
         fileMenu = new Menu("File");
@@ -101,6 +98,13 @@ public class UserInterface extends BorderPane implements Observer{
         this.setBottom(textArea);
 
 
+    }
+    public SubjectTreeModel getModel(){
+        return subjectTreeModel;
+    }
+    public void addStage(Stage stage){
+
+        this.stage = stage;
     }
     /*
         Getter for Window dimmensions
@@ -170,6 +174,19 @@ public class UserInterface extends BorderPane implements Observer{
     public void addAssociationModel(AssociationModel model){
 
         associationModel = model;
+    }
+
+    public void addIOControllerToFileMenu(IOController controller){
+
+        saveAsMenuItem.setOnAction(controller);
+        saveMenuItem.setOnAction(controller);
+        openMenuItem.setOnAction(controller);
+    }
+
+    public void updateView(){
+
+        classListView.updateView();
+        subjectTreeView.updateTree();
     }
 
     /*

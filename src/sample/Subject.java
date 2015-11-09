@@ -2,6 +2,7 @@ package sample;
 
 import javafx.scene.paint.Color;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -17,7 +18,7 @@ import java.util.ArrayList;
     - path = Path of the subject relative to the root node
  */
 
-public class Subject {
+public class Subject implements Serializable{
 
     private String name;
     private String description;
@@ -28,7 +29,7 @@ public class Subject {
     private int numberOfChildrenAssociated;
     private int numberOfAssociationsMade;
     private int numberOfChildren;
-    private Color currentColor;
+    private transient Color currentColor;
 
 
     public Subject(String name,String desc){

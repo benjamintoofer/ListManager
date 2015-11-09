@@ -8,19 +8,20 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
  * Created by benjamintoofer on 11/2/15.
  */
-public class ClassListController implements EventHandler<ActionEvent> {
+public class ClassListController implements EventHandler<ActionEvent>, Serializable{
 
     private ClassListModel classListModel;
     private AssociationModel associationModel;
 
     private ClassListView classListView;
-    private DialogBox addClassDialogBox = new DialogBox("Class",true);
-    private DialogBox removeClassDialogBox = new DialogBox("Class",false);
+    private transient DialogBox addClassDialogBox = new DialogBox("Class",true);
+    private transient DialogBox removeClassDialogBox = new DialogBox("Class",false);
 
     @Override
     public void handle(ActionEvent e)

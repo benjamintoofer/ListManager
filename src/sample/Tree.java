@@ -1,6 +1,7 @@
 package sample;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import java.util.List;
     Tree Class is used in the SubjectTreeeView Class
     Its meant to represent a model of the SubjectTreeView
  */
-public class Tree<T> {
+public class Tree<T> implements Serializable{
 
     private Node rootNode;
 
@@ -41,23 +42,41 @@ public class Tree<T> {
 
         return this.rootNode;
     }
-    public ArrayList<T> getChildrenFromObject(T obj){
+    public ArrayList<T> getChildrenFromObjectPostOrder(T obj){
 
         Node<T> node = findNode(obj);
         ArrayList<T> list = new ArrayList<T>();
 
-        return getChildrenFromObject(node,list);
+        return getChildrenFromObjectPostOrder(node,list);
 
     }
 
-    private ArrayList<T> getChildrenFromObject(Node<T> node, ArrayList<T> list){
+    private ArrayList<T> getChildrenFromObjectPostOrder(Node<T> node, ArrayList<T> list){
 
 
 
         for(Node<T> n : node.getChildren()){
-            getChildrenFromObject(n,list);
+            getChildrenFromObjectPostOrder(n,list);
         }
         list.add(node.getData());
+
+        return list;
+    }
+
+    public ArrayList<T> getChildrenFromObjectPreOrder(T obj){
+
+        Node<T> node = findNode(obj);
+        ArrayList<T> list = new ArrayList<T>();
+
+        return getChildrenFromObjectPreOrder(node,list);
+    }
+
+    private ArrayList<T> getChildrenFromObjectPreOrder(Node<T> node, ArrayList<T> list){
+
+        list.add(node.getData());
+        for(Node<T> n : node.getChildren()){
+            getChildrenFromObjectPostOrder(n,list);
+        }
 
         return list;
     }
@@ -78,7 +97,7 @@ public class Tree<T> {
         }else{
 
             for(Node<T> n : node.getChildren()){
-                getChildrenFromObject(n,list);
+                getChildrenFromObjectPostOrder(n,list);
             }
         }
         return list;
@@ -166,7 +185,7 @@ public class Tree<T> {
     public Node<T> findNode(T lookForNode){
         String path = ((Subject)lookForNode).getPath();
 
-        return traverseTree(path,rootNode);
+        return traverseTree(path, rootNode);
     }
 
     /*
@@ -210,7 +229,7 @@ public class Tree<T> {
 
             if(((Subject)node.getData()).getPosition() == num){
                 for(Node<T> n : node.getChildren()){
-                    nodeToReturn =  traverseTree(subPath,n);
+                    nodeToReturn =  traverseTree(subPath, n);
                     if(nodeToReturn != null){
                         return nodeToReturn;
                     }
@@ -238,7 +257,7 @@ public class Tree<T> {
         ArrayList<Node<T>> list = (ArrayList<Node<T>>) rootNode.getChildren();
         for(Object n : rootNode.getChildren()){
 
-            newString.append(printTree(newString,(Node<T>)n,1));
+            newString.append(printTree(newString, (Node<T>) n, 1));
         }
         //System.out.println(newString.toString());
         return newString.toString();
@@ -258,7 +277,7 @@ public class Tree<T> {
 
             for(Node<T> n: node.getChildren()){
 
-                returnString= printTree(string, (Node<T>)n,depth+1);
+                returnString= printTree(string, (Node<T>) n, depth + 1);
             }
         }
         //System.out.println(string.toString());
@@ -278,7 +297,7 @@ public class Tree<T> {
         - children = children nodes of this node
         - childIndex = index of the position of the last child added
      */
-    public static class Node<T>{
+    public static class Node<T> implements Serializable{
 
         private T data;
         private Node parent;
@@ -312,7 +331,7 @@ public class Tree<T> {
                 children = new ArrayList<Node<T>>();
             }
             child.setParent(this);
-            ((Subject)child.getData()).setPath("." + (this.childIndex)+((Subject) this.getData()).getPath());
+            ((Subject)child.getData()).setPath("." + (this.childIndex) + ((Subject) this.getData()).getPath());
             ((Subject)child.getData()).setPosition(this.childIndex);
             ((Subject)this.getData()).incrementNumberOfChildren();
             this.childIndex++;

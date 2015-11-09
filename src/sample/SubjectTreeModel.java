@@ -28,6 +28,10 @@ public class SubjectTreeModel extends Observable implements Serializable{
         tree = new Tree<>(rootNode);
     }
 
+    public Subject getRootNode(){
+
+        return rootNode;
+    }
     public void setSubjectAssociated(Subject subject, boolean value){
 
         Tree.Node<Subject> foundNode = tree.findNode(subject);
@@ -65,9 +69,14 @@ public class SubjectTreeModel extends Observable implements Serializable{
         tree.updateParentAssociations(s);
     }
 
-    public ArrayList<Subject> getChildrenFromNode(Subject subject){
+    public ArrayList<Subject> getChildrenFromNodePostOrder(Subject subject){
 
-        return tree.getChildrenFromObject(subject);
+        return tree.getChildrenFromObjectPostOrder(subject);
+    }
+
+    public ArrayList<Subject> getChildrenFromNodePreOrder(Subject subject){
+
+        return tree.getChildrenFromObjectPreOrder(subject);
     }
     /*
         All editing methods of the Tree

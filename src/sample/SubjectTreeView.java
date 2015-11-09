@@ -9,18 +9,19 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
 
-import java.util.Optional;
+import java.util.*;
+import java.io.Serializable;
 
 /**
  * Created by benjamintoofer on 11/2/15.
  */
-public class SubjectTreeView extends VBox{
+public class SubjectTreeView extends VBox implements Serializable{
 
-    private TreeView<Subject> treeView;
-    private TreeItem<Subject> rootNode = new TreeItem<>();
+    private transient TreeView<Subject> treeView;
+    private transient TreeItem<Subject> rootNode = new TreeItem<>();
     private SubjectTreeModel model;
-    private DialogBox addDialogBox;
-    private final ContextMenu contextMenu = new ContextMenu();
+    private transient DialogBox addDialogBox;
+    private transient final ContextMenu contextMenu = new ContextMenu();
 
     public SubjectTreeView(){
 
@@ -111,6 +112,35 @@ public class SubjectTreeView extends VBox{
 
     public void addModel(SubjectTreeModel model){
         this.model = model;
+
+    }
+
+    public void loadViewFromModel(SubjectTreeModel model){
+
+        Queue<Subject> queue = new LinkedList<Subject>();
+        Subject currentSubject = model.getRootNode();
+        queue.add(currentSubject);
+        int numChildren = currentSubject.getNumberOfChildren();
+        int index = 0;
+
+        ArrayList<Subject> childrenList = model.getChildrenFromNodePreOrder(currentSubject);
+        TreeItem<Subject> currentTreeItem = new TreeItem<Subject>(currentSubject);
+        treeView.setRoot(currentTreeItem);
+
+        while(!queue.isEmpty()){
+
+            int level = treeView.getTreeItemLevel(currentTreeItem);
+            currentTreeItem = treeView.getTreeItem(level);
+
+            //Add children to Queue
+            for(int i = 0; i < numChildren; i++){
+                queue.add(childrenList.get(index));
+                index++;
+            }
+        }
+
+
+        //treeView.setRoot();
     }
 
     private class CustomTreeCell extends TreeCell<Subject> {//MUST BE OF TYPE SUBJECT

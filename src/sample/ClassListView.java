@@ -16,19 +16,20 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Dialog;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
 
-public class ClassListView extends VBox{
+public class ClassListView extends VBox implements Serializable{
 
     private static ListView<String> listView;
     private ClassListModel model;
-    private DialogBox dialog;
+    private transient DialogBox dialog;
     private  VBox vBox;
-    private HBox buttonBox;
-    private Button addCourseButton, removeCourseButton,connectButton,disconnectButton;
+    private transient HBox buttonBox;
+    private transient Button addCourseButton, removeCourseButton,connectButton,disconnectButton;
 
     public ClassListView(){
 
@@ -140,6 +141,11 @@ public class ClassListView extends VBox{
 
     public void addModel(ClassListModel model){
         this.model = model;
+    }
+
+    public void updateView(){
+
+        listView.refresh();
     }
 
     private class CustomClassListCell extends ListCell<String>{

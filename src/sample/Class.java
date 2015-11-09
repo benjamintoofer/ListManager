@@ -1,5 +1,6 @@
 package sample;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /*
@@ -9,7 +10,7 @@ import java.util.ArrayList;
     - classDescription = description of the class
 
  */
-public class Class {
+public class Class implements Serializable{
 	public String className = "";
 	public String classDescription = "";
 

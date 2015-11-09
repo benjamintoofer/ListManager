@@ -1,9 +1,13 @@
 package sample;
 
+import javafx.stage.Stage;
+
+import java.io.Serializable;
+
 /**
  * Created by benjamintoofer on 11/2/15.
  */
-public class RunListManager {
+public class RunListManager implements Serializable{
 
     private UserInterface uiView;
     private ClassListController classListController;
@@ -12,20 +16,25 @@ public class RunListManager {
     private SubjectTreeModel subjectTreeModel;
     private AssociationModel associationModel;
     private AssociationController associationController;
+    private IOController ioController;
+    private transient Stage stage;
 
 
     /*
         Called from main
         Sets up all models,controllers, and views
      */
-    public RunListManager(){
+    public RunListManager(Stage stage){
 
+        this.stage = stage;
         init();
     }
 
     private void init(){
 
         uiView = new UserInterface(1200,900);
+
+        ioController = new IOController(stage);
 
         classListController = new ClassListController();
         classListModel = new ClassListModel();
@@ -50,6 +59,11 @@ public class RunListManager {
         associationController.addClassListView((uiView.getClassListView()));
         associationController.addSubjectTreeView(uiView.getSubjectTreeView());
 
+
+        uiView.addStage(stage);
+
+        uiView.addIOControllerToFileMenu(ioController);
+
         uiView.addClassListController(classListController);
         uiView.addClassListModel(classListModel);
 
@@ -59,10 +73,18 @@ public class RunListManager {
         uiView.addAssociationController(associationController);
         uiView.addAssociationModel(associationModel);
 
+        ioController.addRunListManager(this);
+        ioController.addSubjectTreeView(uiView.getSubjectTreeView());
+        ioController.addClassListView(uiView.getClassListView());
+        ioController.addClassListModel(classListModel);
+        ioController.addSubjectTreeModel(subjectTreeModel);
+
         //Adding observers
         classListModel.addObserver(uiView);
         subjectTreeModel.addObserver(uiView);
         associationModel.addObserver(uiView);
+
+
 
 
     }
@@ -70,5 +92,18 @@ public class RunListManager {
     public UserInterface getUIView(){
 
         return uiView;
+    }
+
+    public void updateView(){
+
+        uiView.getSubjectTreeView().loadViewFromModel(subjectTreeModel);
+        System.out.println("FUCKKKK "+subjectTreeModel.printTree());
+        uiView.getClassListView().addModel(classListModel);
+        uiView.updateView();
+    }
+
+    public IOController getIoController(){
+
+        return ioController;
     }
 }

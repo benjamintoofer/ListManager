@@ -1,6 +1,8 @@
 package sample;
 
-public class Association {
+import java.io.Serializable;
+
+public class Association implements Serializable{
 
 	public Subject subjectObj;
 	public Class classObj;

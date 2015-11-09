@@ -6,20 +6,21 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Optional;
 
 /**
  * Created by benjamintoofer on 11/4/15.
  */
-public class SubjectTreeController implements EventHandler<ActionEvent>{
+public class SubjectTreeController implements EventHandler<ActionEvent>, Serializable{
 
     private SubjectTreeModel subjectTreeModel;
     private AssociationModel associationModel;
     private SubjectTreeView subjectTreeView;
 
-    private DialogBox addClassDialogBox = new DialogBox("Class",true);
-    private DialogBox removeClassDialogBox = new DialogBox("Class",false);
+    private transient DialogBox addClassDialogBox = new DialogBox("Class",true);
+    private transient DialogBox removeClassDialogBox = new DialogBox("Class",false);
 
     @Override
     public void handle(ActionEvent e)
@@ -59,7 +60,7 @@ public class SubjectTreeController implements EventHandler<ActionEvent>{
 
                     }else{
 
-                        ArrayList<Subject> childrenList = subjectTreeModel.getChildrenFromNode(subjectToRemove);
+                        ArrayList<Subject> childrenList = subjectTreeModel.getChildrenFromNodePostOrder(subjectToRemove);
                         for(Subject s: childrenList){
                             subjectTreeModel.setSubjectAssociated(s,false);
                             associationModel.removeAssociation(s);
