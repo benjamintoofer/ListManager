@@ -16,19 +16,20 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.scene.control.Dialog;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Optional;
 
-public class ClassListView extends VBox{
+public class ClassListView extends VBox implements Serializable{
 
     private static ListView<String> listView;
     private ClassListModel model;
-    private DialogBox dialog;
+    private transient DialogBox dialog;
     private  VBox vBox;
-    private HBox buttonBox;
-    private Button addCourseButton, removeCourseButton;
+    private transient HBox buttonBox;
+    private transient Button addCourseButton, removeCourseButton,connectButton,disconnectButton;
 
     public ClassListView(){
 
@@ -41,34 +42,44 @@ public class ClassListView extends VBox{
         listView =  new ListView<String>();
         listView.setEditable(true);
         listView.setPrefSize(300,900);
-        ObservableList<String> tempItems = FXCollections.observableArrayList("COMP2730", "COMP2400", "COMP3351", "COMP3381");
-        //listView.setItems(tempItems);
         listView.setCellFactory((ListView<String> l)->new CustomClassListCell());
 
 
 
         //Instantiate add and remove course buttons
         buttonBox = new HBox();
+
+        //Add Course Button
         addCourseButton = new Button("+");
         addCourseButton.setId("add_course_button");
+        addCourseButton.setPrefWidth(30);
+
+        //Remove Course Button
         removeCourseButton = new Button("-");
         removeCourseButton.setId("remove_course_button");
-        buttonBox.getChildren().addAll(addCourseButton,removeCourseButton);
+
+        //Connect Button
+        connectButton = new Button("Connect");
+        connectButton.setId("connect_button");
+
+        //Disconnect Button
+        disconnectButton = new Button("Disconnect");
+        disconnectButton.setId("disconnect_button");
+
+        buttonBox.getChildren().addAll(addCourseButton,removeCourseButton,connectButton,disconnectButton);
 
 
         this.getChildren().addAll(listView, buttonBox);
 
         //////////
-        dialog = new DialogBox(true);
-        dialog.setTitle("Class INformation");
+        dialog = new DialogBox("Class",true);
+        dialog.setTitle("Class Information");
 
 
         ////////
     }
 
     public void removeCourse(ArrayList<Class> list){
-
-
 
             listView.getItems().removeAll(listView.getItems());
             ArrayList<String> newList = new ArrayList<>();
@@ -78,9 +89,17 @@ public class ClassListView extends VBox{
             }
             listView.getItems().addAll(newList);
 
-        //listView.getItems().so
 
     }
+
+    /*
+        Getters for Buttons:
+
+            - addCourseButton
+            - removeCourseButton
+            - connectButton
+            - disconnectButton
+     */
     public Button getAddCourseButton(){
 
         return addCourseButton;
@@ -91,24 +110,42 @@ public class ClassListView extends VBox{
         return removeCourseButton;
     }
 
-    public String getSelectedClass(){
+    public Button getConnectButton(){
+
+        return connectButton;
+    }
+
+    public Button getDisconnectButton(){
+
+        return disconnectButton;
+    }
+
+    public String getSelectedClassByString(){
         return listView.getSelectionModel().getSelectedItem();
+    }
+
+    public Class getSelectedClass(String name){
+
+        return model.getClassByName(name);
     }
     public void addClasses(ArrayList<Class> list){
 
         listView.getItems().removeAll(listView.getItems());
-        ArrayList<String> newList = new ArrayList<>();
+        ArrayList<String> newList = new ArrayList<String>();
         for(Class c: list){
 
             newList.add(c.getClassName());
         }
         listView.getItems().addAll(newList);
-        //System.out.println(model);
-        System.out.println(model.getClassList().size());
     }
 
     public void addModel(ClassListModel model){
         this.model = model;
+    }
+
+    public void updateView(){
+
+        listView.refresh();
     }
 
     private class CustomClassListCell extends ListCell<String>{

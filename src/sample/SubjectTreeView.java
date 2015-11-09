@@ -1,26 +1,27 @@
 package sample;
 
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.*;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.Node;
-import javafx.scene.layout.VBox;
 
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Optional;
+import javafx.scene.control.*;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
+
+import java.util.*;
+import java.io.Serializable;
 
 /**
  * Created by benjamintoofer on 11/2/15.
  */
-public class SubjectTreeView extends VBox{
+public class SubjectTreeView extends VBox implements Serializable{
 
-    private TreeView<Subject> treeView;
-    private TreeItem<Subject> rootNode = new TreeItem<>();
-    private DialogBox addDialogBox;
-    private final ContextMenu contextMenu = new ContextMenu();
+    private transient TreeView<Subject> treeView;
+    private transient TreeItem<Subject> rootNode = new TreeItem<>();
+    private SubjectTreeModel model;
+    private transient DialogBox addDialogBox;
+    private transient final ContextMenu contextMenu = new ContextMenu();
 
     public SubjectTreeView(){
 
@@ -30,13 +31,17 @@ public class SubjectTreeView extends VBox{
     private void init(){
 
         rootNode.setExpanded(true);
-        rootNode.setValue(new Subject("Root", "Root Desc"));
+        Subject root = new Subject("Root","Root Desc");
+        root.setPosition(0);
+        root.setPath(".0");
+        rootNode.setValue(root);
         treeView = new TreeView<>((TreeItem<Subject>) rootNode);
-        treeView.setPrefSize(400,900);
+        treeView.setPrefSize(400, 900);
         treeView.setEditable(true);
         treeView.setCellFactory((TreeView<Subject> p) -> new CustomTreeCell());
-        addDialogBox = new DialogBox(true);
+        addDialogBox = new DialogBox("Subject",true);
         this.getChildren().add(treeView);
+
     }
 
     public ContextMenu getContextMenu(){
@@ -44,19 +49,111 @@ public class SubjectTreeView extends VBox{
     }
 
     public Subject getSelectedTreeItem(){
-        //treeView
-        return treeView.getSelectionModel().getSelectedItem().getValue();
+
+        if(treeView.getSelectionModel().getSelectedItem() != null){
+
+            return treeView.getSelectionModel().getSelectedItem().getValue();
+
+        }else{
+
+
+            return null;
+        }
+
     }
+
+    public TreeItem<Subject> getTreeItem(){
+        return treeView.getSelectionModel().getSelectedItem();
+    }
+
+
+
+    public TreeView<Subject> getTreeView(){
+        return treeView;
+    }
+
+    public void addChildToTreeView(Subject child){
+
+        treeView.getSelectionModel().getSelectedItem().getChildren().add(new TreeItem<Subject>(child));
+        System.out.println("Parent that is adding "+treeView.getSelectionModel().getSelectedItem().getValue().getName()+"Child being added: "+child.getName());
+
+    }
+
+    public void removeChildFromTreeView(Subject child){
+
+        TreeItem<Subject> temp = treeView.getSelectionModel().getSelectedItem();
+
+        if(treeView.getSelectionModel().getSelectedItem().getParent() != null){
+            treeView.getSelectionModel().getSelectedItem().getParent().getChildren().remove(temp);
+        }else{
+            System.err.println("Error Node:"+treeView.getSelectionModel().getSelectedItem().getValue().getName()+" has null parent and cannot be removed");
+        }
+
+
+    }
+
+    public void modifyChildFromTreeView(Subject child){
+
+        TreeItem<Subject> temp = treeView.getSelectionModel().getSelectedItem();
+        System.out.println(temp+"\n"+child);
+        temp.getValue().setName(child.getName());
+        temp.getValue().setDescription(child.getDescription());
+        //this.treeView.edit(temp);
+
+
+
+    }
+
+    public void updateTree(){
+        treeView.refresh();
+    }
+
+
+
+    public void addModel(SubjectTreeModel model){
+        this.model = model;
+
+    }
+
+    public void loadViewFromModel(SubjectTreeModel model){
+
+        Queue<Subject> queue = new LinkedList<Subject>();
+        Subject currentSubject = model.getRootNode();
+        queue.add(currentSubject);
+        int numChildren = currentSubject.getNumberOfChildren();
+        int index = 0;
+
+        ArrayList<Subject> childrenList = model.getChildrenFromNodePreOrder(currentSubject);
+        TreeItem<Subject> currentTreeItem = new TreeItem<Subject>(currentSubject);
+        treeView.setRoot(currentTreeItem);
+
+        while(!queue.isEmpty()){
+
+            int level = treeView.getTreeItemLevel(currentTreeItem);
+            currentTreeItem = treeView.getTreeItem(level);
+
+            //Add children to Queue
+            for(int i = 0; i < numChildren; i++){
+                queue.add(childrenList.get(index));
+                index++;
+            }
+        }
+
+
+        //treeView.setRoot();
+    }
+
     private class CustomTreeCell extends TreeCell<Subject> {//MUST BE OF TYPE SUBJECT
 
 
-        private TextField textField;
 
         public CustomTreeCell(){
 
             //Initialize
             init();
         }
+
+
         private void init(){
 
             //Add items to ContextMenu and set ID's for items
@@ -73,30 +170,47 @@ public class SubjectTreeView extends VBox{
         @Override
         public void startEdit(){
 
-            /*super.startEdit();
-            System.out.println("Start edit");
-            if(textField == null)
-                createTextField();
+            super.startEdit();
 
-            setText(null);
-            setGraphic(textField);
-            textField.selectAll();*/
+             System.out.println("Start Edit");
             String oldName = getText();
             String newName = null;
             String newDesc = null;
             addDialogBox.setClassTextField(oldName);
-            addDialogBox.setDescTextField("");
+            addDialogBox.setDescTextField(model.getDesc(this.getItem()));
             Optional<ButtonType> result = addDialogBox.showAndWait();
 
             if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
 
-
                 newName = addDialogBox.getClassName();
                 newDesc = addDialogBox.getDesc();
-                //model.modifyClass(oldName,newName,newDesc);
-                //model.addClassToList(new Class(name, desc));
+                this.getItem().setName(newName);
+                this.getItem().setDescription(newDesc);
+
+                model.modifyItem(this.getItem(), newName, newDesc);
+
+                Circle circle = new Circle(10);
+                Text text;
+                if(this.getItem().isLeaf()){
+
+                    if(this.getItem().getNumberOfAssociationsMade() == 0)
+                        text = new Text("");
+                    else
+                        text = new Text(this.getItem().getNumberOfAssociationsMade()+"");
+
+                }else{
+                    text = new Text (this.getItem().getNumberOfChildrenAssociated()+"/"+this.getItem().getNumberOfChildren());
+                }
+                text.setBoundsType(TextBoundsType.VISUAL);
+                StackPane stack = new StackPane();
+                stack.getChildren().add(circle);
+                stack.getChildren().add(text);
+                circle.setFill(this.getTreeItem().getValue().getCurrentColor());
+                setGraphic(stack);
+
+
             }else{
-                //setText(oldName);
+
                 this.cancelEdit();
             }
         }
@@ -106,8 +220,6 @@ public class SubjectTreeView extends VBox{
 
             super.cancelEdit();
 
-            setText(getItem().getName());
-            setGraphic(getTreeItem().getGraphic());
 
         }
 
@@ -121,39 +233,40 @@ public class SubjectTreeView extends VBox{
                 setGraphic(null);
             }else{
                 if(isEditing()){
-                    if(textField != null){
-                        textField.setText(getString());
-                    }
+
                     setText(null);
+                    Circle circle = new Circle(10);
+
+                    circle.setFill(this.getTreeItem().getValue().getCurrentColor());
+
+
+                    setGraphic(circle);
                 }else{
                     setText(getString());
-                    setGraphic(getTreeItem().getGraphic());
 
-                    if (!getTreeItem().isLeaf() && getTreeItem().getParent()!= null){
-                        setContextMenu(contextMenu);
-                    }else if(getTreeItem().isLeaf()){
-                        setContextMenu(contextMenu);
+
+                    Circle circle = new Circle(10);
+                    Text text;
+                    if(this.getItem().isLeaf()){
+
+                        if(this.getItem().getNumberOfAssociationsMade() == 0)
+                            text = new Text("");
+                        else
+                            text = new Text(this.getItem().getNumberOfAssociationsMade()+"");
+
+                    }else{
+                        text = new Text (this.getItem().getNumberOfChildrenAssociated()+"/"+this.getItem().getNumberOfChildren());
                     }
+                    text.setBoundsType(TextBoundsType.VISUAL);
+                    StackPane stack = new StackPane();
+                    stack.getChildren().add(circle);
+                    stack.getChildren().add(text);
+                    circle.setFill(this.getTreeItem().getValue().getCurrentColor());
+                    setGraphic(stack);
+
+                    setContextMenu(contextMenu);
                 }
             }
-        }
-
-        private void createTextField(){
-
-            textField = new TextField(getString());
-            textField.setOnKeyReleased((KeyEvent t) ->{
-                if(t.getCode() == KeyCode.ENTER){
-                    //commitEdit(textField.getText());
-                }else if(t.getCode() == KeyCode.ESCAPE){
-                    cancelEdit();
-                }
-            } );
-        }
-
-        private void displayInfoOfSelectedItem(){
-
-            if(isSelected())
-                System.out.println("Selected");
         }
 
         private String getString(){

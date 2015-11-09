@@ -1,24 +1,45 @@
 package sample;
 
+import javafx.scene.paint.Color;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by benjamintoofer on 11/1/15.
  */
-public class Subject {
+
+/*
+    Subject Attributes:
+
+    - name = Name of the subject
+    - description = Description of the subject
+    - position = Position of the subject relative to its parent subject
+    - path = Path of the subject relative to the root node
+ */
+
+public class Subject implements Serializable{
 
     private String name;
     private String description;
     private int position;
     private String path;
-    private boolean isAssociated;
-    private ArrayList<Subject> subTopicList;
-    private ArrayList<String> learningOutcomeList;
+    private boolean associated;
+    private boolean leaf;
+    private int numberOfChildrenAssociated;
+    private int numberOfAssociationsMade;
+    private int numberOfChildren;
+    private transient Color currentColor;
 
 
     public Subject(String name,String desc){
         this.name = name;
         this.description = desc;
+        this.associated = false;
+        this.leaf = true;
+        this.currentColor = Color.RED;
+        this.numberOfChildrenAssociated = 0;
+        this.numberOfAssociationsMade = 0;
     }
 
 
@@ -42,27 +63,6 @@ public class Subject {
         this.description = description;
     }
 
-    public ArrayList<Subject> getSubTopicList()
-    {
-        return subTopicList;
-    }
-
-    public void addSubTopic(Subject addSubject)
-    {
-        this.subTopicList.add(addSubject);
-    }
-
-    public ArrayList<String> getLearningOutcomeList()
-    {
-        return learningOutcomeList;
-    }
-
-    public void addLearningOutcome(String learnOut){
-
-        this.learningOutcomeList.add(learnOut);
-
-    }
-
     public int getPosition()
     {
         return position;
@@ -73,7 +73,6 @@ public class Subject {
         this.position = position;
     }
 
-
     public String getPath()
     {
         return path;
@@ -82,5 +81,85 @@ public class Subject {
     public void setPath(String path)
     {
         this.path = path;
+    }
+
+    public boolean isAssociated()
+    {
+        return associated;
+    }
+
+    public void setAssociated(boolean associated)
+    {
+        this.associated = associated;
+    }
+
+    public boolean isLeaf()
+    {
+        return leaf;
+    }
+
+    public void setLeaf(boolean leaf)
+    {
+        this.leaf = leaf;
+    }
+
+    public int getNumberOfChildrenAssociated()
+    {
+        return numberOfChildrenAssociated;
+    }
+
+    public void setNumberOfChildrenAssociated(int numberOfChildrenAssociated)
+    {
+        this.numberOfChildrenAssociated = numberOfChildrenAssociated;
+
+        if(leaf){
+            currentColor = associated ? Color.GREEN : Color.RED;
+        }else{
+            currentColor = (numberOfChildrenAssociated == 0) ? Color.RED : ((numberOfChildrenAssociated == numberOfChildren) ? Color.GREEN : Color.ORANGE);
+        }
+
+    }
+
+    public int getNumberOfChildren()
+    {
+        return numberOfChildren;
+    }
+    public void decrementNumberOfChildrenAssociated(){
+
+        this.setNumberOfChildrenAssociated(numberOfChildrenAssociated - 1);
+    }
+
+    public void incrementNumberOfChildrenAssociated()
+    {
+        this.setNumberOfChildrenAssociated(numberOfChildrenAssociated + 1);
+    }
+    public void decrementNumberOfChildren(){
+
+        this.numberOfChildren--;
+    }
+
+    public void incrementNumberOfChildren()
+    {
+        this.numberOfChildren++;
+    }
+
+    public Color getCurrentColor()
+    {
+        return currentColor;
+    }
+
+    public void setCurrentColor(Color currentColor)
+    {
+        this.currentColor = currentColor;
+    }
+
+    public int getNumberOfAssociationsMade()
+    {
+        return numberOfAssociationsMade;
+    }
+
+    public void setNumberOfAssociationsMade(int numberOfAssociationsMade)
+    {
+        this.numberOfAssociationsMade = numberOfAssociationsMade;
     }
 }

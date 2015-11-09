@@ -4,26 +4,23 @@ package sample;
  * Created by benjamintoofer on 10/29/15.
  */
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.beans.property.SimpleStringProperty;
 
+
+
+
+import java.io.Serializable;
 import java.util.*;
-
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 
-public class UserInterface extends BorderPane implements Observer{
+public class UserInterface extends BorderPane implements Observer,Serializable{
 
     private int winWidth;
     private int winHeight;
+
+    private transient Stage stage;
 
     //Views
     private ClassListView classListView;
@@ -32,22 +29,19 @@ public class UserInterface extends BorderPane implements Observer{
     //Models
     private ClassListModel classListModel;
     private SubjectTreeModel subjectTreeModel;
+    private AssociationModel associationModel;
+
 
     //Menu Bar
-    private MenuBar menuBar;
-    private Menu fileMenu;
-    private MenuItem saveMenuItem;
-    private MenuItem saveAsMenuItem;
-    private MenuItem openMenuItem;
-
-    //TreeView
-    private TreeView<String> treeView;
-
-
+    private transient MenuBar menuBar;
+    private transient Menu fileMenu;
+    private transient MenuItem saveMenuItem;
+    private transient MenuItem saveAsMenuItem;
+    private transient MenuItem openMenuItem;
 
 
     //Console View
-    private TextArea textArea;
+    private transient TextArea textArea;
 
     public UserInterface(int width,int height){
 
@@ -60,10 +54,14 @@ public class UserInterface extends BorderPane implements Observer{
 
     private void init(){
 
+
         //Instantiate Menu Items
         saveMenuItem = new MenuItem("Save");
+        saveMenuItem.setId("save_item");
         saveAsMenuItem = new MenuItem("Save As...");
+        saveAsMenuItem.setId("save_as_item");
         openMenuItem = new MenuItem("Open...");
+        openMenuItem.setId("open_item");
 
         //Instantiate Menu
         fileMenu = new Menu("File");
@@ -94,11 +92,23 @@ public class UserInterface extends BorderPane implements Observer{
 
         //Instantiate Text Area
         textArea = new TextArea();
+        textArea.setEditable(false);
+        textArea.setPrefSize(winWidth,winHeight*.3);
 
         this.setBottom(textArea);
 
 
     }
+    public SubjectTreeModel getModel(){
+        return subjectTreeModel;
+    }
+    public void addStage(Stage stage){
+
+        this.stage = stage;
+    }
+    /*
+        Getter for Window dimmensions
+     */
     public int getWinWidth()
     {
         return winWidth;
@@ -108,9 +118,10 @@ public class UserInterface extends BorderPane implements Observer{
     {
         return winHeight;
     }
-
-
-
+    //////////////////////////////////////////////////////
+    /*
+        Getter for ClassListView and SubjectTreeView
+     */
     public ClassListView getClassListView(){
 
         return classListView;
@@ -120,9 +131,11 @@ public class UserInterface extends BorderPane implements Observer{
 
         return subjectTreeView;
     }
+    //////////////////////////////////////////////////////
     /*
         Add Class Model and Controller
      */
+
     public void addClassListModel(ClassListModel model){
 
         classListModel = model;
@@ -134,35 +147,77 @@ public class UserInterface extends BorderPane implements Observer{
         classListView.getAddCourseButton().setOnAction(controller);
         classListView.getRemoveCourseButton().setOnAction(controller);
     }
-
+    //////////////////////////////////////////////////////
     /*
         Add Subject Tree Model and Controller
      */
     public void addSubjectTreeModel(SubjectTreeModel model){
 
         subjectTreeModel = model;
+        subjectTreeView.addModel(model);
     }
 
     public void addSubjectTreeController(SubjectTreeController controller){
 
         subjectTreeView.getContextMenu().setOnAction(controller);
     }
+    //////////////////////////////////////////////////////
+    /*
+        Add Association Model and Controller
+     */
+    public void addAssociationController(AssociationController controller){
 
+        classListView.getConnectButton().setOnAction(controller);
+        classListView.getDisconnectButton().setOnAction(controller);
+    }
 
+    public void addAssociationModel(AssociationModel model){
 
+        associationModel = model;
+    }
+
+    public void addIOControllerToFileMenu(IOController controller){
+
+        saveAsMenuItem.setOnAction(controller);
+        saveMenuItem.setOnAction(controller);
+        openMenuItem.setOnAction(controller);
+    }
+
+    public void updateView(){
+
+        classListView.updateView();
+        subjectTreeView.updateTree();
+    }
+
+    /*
+        Updated from Observables:
+
+         o = Observable object:
+             1.SubjectTreeModel
+            2.ClassListModel
+         arg = Optional argument passed when observable notifies obevers
+     */
     @Override
     public void update(Observable o, Object arg)
     {
-        System.out.println(o.getClass().toString());
+
         /*
-            Update Class list view when change has occured in Class list model
+            Update Class list view when change has occurred in ClassListModel
+
+           1. Check of observable object that notified is the ClassListModel
+           2. Determine argument, whether the ClassListView must
+                - add an item to its list
+                    (modifying an a item occurs here as well)
+                - remove an item from its list
          */
         if(o.getClass().toString().equals("class sample.ClassListModel")){
             if(arg.equals("add")){
+
                 ArrayList<Class> newClassList = classListModel.getClassList();
                 classListView.addClasses(newClassList);
             }
             if(arg.equals("remove")){
+
                 ArrayList<Class> newClassList = classListModel.getClassList();
                 classListView.removeCourse(newClassList);
             }
@@ -170,10 +225,45 @@ public class UserInterface extends BorderPane implements Observer{
         }
 
         /*
-            Update Subject tree view when change has occured in Subject tree model
+            Update Subject tree view when change has occurred in Subject tree model
+
+           1. Check of observable object that notified is the SubjectTreeModel
+           2. Determine argument, whether the SubjectTreeView must
+                - add an item to its tree
+                - remove an item from its tree
+                - modify an item in the tree
          */
         if(o.getClass().toString().equals("class sample.SubjectTreeModel")){
+            if(arg.equals("add")){
 
+                subjectTreeView.addChildToTreeView(subjectTreeModel.getChildToAdd());
+                System.out.println(subjectTreeModel.printTree());
+
+            }
+            if(arg.equals("remove")){
+
+                subjectTreeView.removeChildFromTreeView(subjectTreeModel.getChildToRemove());
+                System.out.println(subjectTreeModel.printTree());
+            }
+
+            if(arg.equals("modify")){
+
+                subjectTreeView.modifyChildFromTreeView(subjectTreeModel.getChildToModify());
+                subjectTreeView.updateTree();
+                System.out.println(subjectTreeModel.printTree());
+            }
+        }
+
+        if(o.getClass().toString().equals("class sample.AssociationModel")){
+
+            if(arg.equals("add")){
+
+                String className = associationModel.getAddedAssociation().getClassObj().getClassName();
+                String subjectName = associationModel.getAddedAssociation().getSubjectObj().getName();
+                subjectTreeView.updateTree();
+                textArea.setText("Association just created between Class: "+className+" with Subject: "+subjectName);
+
+            }
         }
     }
 

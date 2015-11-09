@@ -8,14 +8,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.stage.Stage;
 
-public class Main extends Application {
+import java.util.Observable;
+import java.util.Observer;
+
+public class Main extends Application implements Observer{
 
     static RunListManager RLM;
     @Override
     public void start(Stage primaryStage) throws Exception{
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
 
-        RLM = new RunListManager();
+        RLM = new RunListManager(primaryStage);
+        RLM.getIoController().addObserver(this);
         Scene scene = new Scene(RLM.getUIView(), RLM.getUIView().getWinWidth(), RLM.getUIView().getWinHeight());
 
         //Scene scene
@@ -27,6 +31,14 @@ public class Main extends Application {
 
     public static void main(String[] args) {
         Application.launch(args);
+    }
+
+    @Override
+    public void update(Observable o, Object arg)
+    {
+        System.out.println("Assigning RLM");
+        RLM = (RunListManager)arg;
+        RLM.updateView();
     }
 }
 

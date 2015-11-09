@@ -6,18 +6,21 @@ import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
  * Created by benjamintoofer on 11/4/15.
  */
-public class SubjectTreeController implements EventHandler<ActionEvent>{
+public class SubjectTreeController implements EventHandler<ActionEvent>, Serializable{
 
-    private SubjectTreeModel model;
-    private SubjectTreeView view;
+    private SubjectTreeModel subjectTreeModel;
+    private AssociationModel associationModel;
+    private SubjectTreeView subjectTreeView;
 
-    private DialogBox addClassDialogBox = new DialogBox(true);
-    private DialogBox removeClassDialogBox = new DialogBox(false);
+    private transient DialogBox addClassDialogBox = new DialogBox("Class",true);
+    private transient DialogBox removeClassDialogBox = new DialogBox("Class",false);
 
     @Override
     public void handle(ActionEvent e)
@@ -26,28 +29,66 @@ public class SubjectTreeController implements EventHandler<ActionEvent>{
 
             if(((MenuItem)e.getTarget()).getId().equals("add_menu_item")){
 
-                System.out.println("Adding");
+
                 addClassDialogBox.setClassTextField("");
                 addClassDialogBox.setDescTextField("");
 
                 Optional<ButtonType> result = addClassDialogBox.showAndWait();
                 if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
-                    //classListModel.removeClassFromList(classListView.getSelectedClass());
-                    view.getSelectedTreeItem();
+
+                    if(subjectTreeView.getSelectedTreeItem().isAssociated()){
+                        associationModel.removeAssociation(subjectTreeView.getSelectedTreeItem());
+                    }
+
+                    Subject addSubject = new Subject(addClassDialogBox.getClassName(),addClassDialogBox.getDesc());
+                    subjectTreeModel.setSubjectAssociated(subjectTreeView.getSelectedTreeItem(),false);
+                    subjectTreeModel.addItem(subjectTreeView.getSelectedTreeItem(),addSubject);
                 }
 
+                System.out.println("Printing associations after add:\n" + associationModel.printAssociations());
+
             }else if(((MenuItem) e.getTarget()).getId().equals("delete_menu_item")){
-                System.out.println("Deleteing");
+
+                Optional<ButtonType> result = removeClassDialogBox.showAndWait();
+                if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
+
+                    Subject subjectToRemove = subjectTreeView.getSelectedTreeItem();
+                    if(subjectTreeView.getSelectedTreeItem().isLeaf()){
+
+                        associationModel.removeAssociation(subjectToRemove);
+
+
+                    }else{
+
+                        ArrayList<Subject> childrenList = subjectTreeModel.getChildrenFromNodePostOrder(subjectToRemove);
+                        for(Subject s: childrenList){
+                            subjectTreeModel.setSubjectAssociated(s,false);
+                            associationModel.removeAssociation(s);
+                        }
+
+                    }
+
+                    subjectTreeModel.removeItem(subjectToRemove);
+
+                }
+
             }
         }
     }
 
-    public void addModel(SubjectTreeModel model){
-        this.model = model;
+    public void addSubjectTreeModel(SubjectTreeModel model){
+
+        this.subjectTreeModel = model;
     }
 
-    public void addView(SubjectTreeView view){
-        this.view = view;
+    public void addAssociationModel(AssociationModel model){
+
+        this.associationModel = model;
+    }
+
+    public void addSubjectTreeView(SubjectTreeView view){
+
+        this.subjectTreeView = view;
     }
 
 }
