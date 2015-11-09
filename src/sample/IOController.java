@@ -74,6 +74,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
                     FileInputStream fileIn = new FileInputStream(savedPath);
                     ObjectInputStream in = new ObjectInputStream(fileIn);
                     rlm = (RunListManager)in.readObject();
+                    subjectTreeView.loadViewFromModel(rlm.getSubjectTreeModel());
                     in.close();
                     fileIn.close();
 
