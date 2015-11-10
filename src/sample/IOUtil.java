@@ -152,7 +152,9 @@ public class IOUtil {
         String requirement = "";
         boolean foundSubj = false;
         boolean crossRef = false;
+        String[] classInfo;
         ArrayList<String> knowledgeType = new ArrayList<String>();
+        ArrayList<Class> classes = new ArrayList<Class>();
         //TODO: Placeholder Objects (begin with set to null)
         int chunkNo = 0;
 
@@ -160,13 +162,26 @@ public class IOUtil {
         while((line=br.readLine())!=null)
         {
             chunkNo++;
+            if (line.equals("Classes:")) {
+                while((line=br.readLine())!=null && !line.isEmpty()) {
+                    if (line.contains(":")) {
+                        classInfo = line.split(":");
+                        Class classObj = new Class(classInfo[0].trim(), classInfo[1].trim());
+                        classes.add(classObj);
+                    } else {
+                        Class classObj = new Class(line.trim(), "");
+                        classes.add(classObj);
+                    }
+                    System.out.println("Class: " + line);
+                }
+            }
             if (line.isEmpty() || line.equals("\f")) {
                 continue;
             } else {
                 if (line.matches("[A-Z]+/{1}([A-z0-9]\\s?)+[^ \\.]{1,}")) {
                     if (foundSubj) {
                         //System.out.println("PROCESSING CHUNK: " + requirement);
-                        process(requirement, chunkNo);
+                        process(requirement, chunkNo, classes);
                         requirement = "";
                         crossRef = false;
                     }
@@ -179,12 +194,15 @@ public class IOUtil {
             }
         }
         //System.out.println("PROCESSING CHUNK: " + requirement);
-        process(requirement, chunkNo);
+        process(requirement, chunkNo, classes);
 
         System.out.println("\nDone parsing");
     }
 
-    private static void process(String requirement, int chunkNo) {
+    private static ArrayList<Subject> process(String requirement, int chunkNo, ArrayList<Class> classes) {
+        ArrayList<Subject> subjects = new ArrayList<Subject>();
+        Subject parentCategory;
+        Subject parentSubject;
         String temp = "";
         String line = "";
         String desc = "";
@@ -198,7 +216,17 @@ public class IOUtil {
         split = scanner.nextLine().split("/");
         System.out.println("Category: " + split[0]);
         System.out.println("Subject: " + split[1]);
-        temp = scanner.nextLine();
+
+        parentCategory = new Subject(split[0], "");
+        subjects.add(parentCategory);
+
+        if (scanner.hasNextLine()) {
+            temp = scanner.nextLine();
+        } else {
+            System.out.println("Empty subject.");
+            return null;
+        }
+
             while(!temp.contains("\t") && scanner.hasNextLine()) {
                 desc += temp;
                 //System.out.println(desc);
@@ -373,7 +401,7 @@ public class IOUtil {
                 if (temp.contains(":")) {
                     split = temp.split(":");
                     //ADD TOPIC split[0]
-
+                    subjects.add(new Subject(split[0], ))
                     //ADD ASSOC split[1]
                     assoc = split[1].split(",");
                     for (int i = 0; i < assoc.length; i++) {
@@ -381,13 +409,20 @@ public class IOUtil {
                         System.out.println("Association: " + split[0].replaceAll("\\t","") + " Course: " + assoc[i]);
 
                     }
+                } else {
+                    //ADD TOPIC (NO ASSOCIATIONS)
                 }
                 //hasParent = false;
             }
         }
+        return subjects;
     }
 
-    private static void exportTxt(String fileName, ArrayList<Subject> subjects) {
+    public static void exportTxt(String fileName, ArrayList<Subject> subjects) {
 
+    }
+
+    public static void importClasses(ArrayList<Class> classes) {
+        //ADD CLASS LIST
     }
 }
