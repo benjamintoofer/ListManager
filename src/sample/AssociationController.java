@@ -93,12 +93,14 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
 
                             success = associationModel.removeAssociation(s,selectedClass);
 
-                            if(success)
-                                subjectTreeModel.setSubjectAssociated(s,false);
+                            if(success) {
+                                subjectTreeModel.setSubjectAssociated(s, false);
+                                subjectTreeModel.updateTreeColorAssociation(s);
+                            }
 
                         }
                     }
-                    subjectTreeModel.updateTreeColorAssociation(selectedSubject);
+
                     subjectView.updateTree();
                 }
             }

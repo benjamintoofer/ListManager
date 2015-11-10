@@ -111,4 +111,14 @@ public class RunListManager implements Serializable{
 
         return subjectTreeModel;
     }
+
+    public AssociationModel getAssociationModel(){
+
+        return associationModel;
+    }
+
+    public ClassListModel getClassListModel(){
+
+        return classListModel;
+    }
 }

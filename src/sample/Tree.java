@@ -275,9 +275,9 @@ public class Tree<T> implements Serializable{
             tab = tab+"\t";
         }
         if(node.getNumberOfChildren() == 0){
-            string.append("\n"+tab+"- "+node.toString()+" "+((Subject)node.getData()).getNumberOfChildrenAssociated()+"/"+((Subject)node.getData()).getNumberOfChildren()+" "+((Subject)node.getData()).isAssociated());
+            string.append("\n"+tab+"- "+node.toString()+" "+((Subject)node.getData()).getNumberOfChildrenAssociated()+"/"+((Subject)node.getData()).getNumberOfChildren()+" "+((Subject)node.getData()).getNumberOfAssociationsMade());
         }else{
-            string.append("\n"+tab+"- "+node.toString()+" "+((Subject)node.getData()).getNumberOfChildrenAssociated()+"/"+((Subject)node.getData()).getNumberOfChildren()+" "+((Subject)node.getData()).isAssociated());
+            string.append("\n"+tab+"- "+node.toString()+" "+((Subject)node.getData()).getNumberOfChildrenAssociated()+"/"+((Subject)node.getData()).getNumberOfChildren()+" "+((Subject)node.getData()).getNumberOfAssociationsMade());
 
             for(Node<T> n: node.getChildren()){
 

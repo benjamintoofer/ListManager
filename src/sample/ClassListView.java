@@ -143,6 +143,11 @@ public class ClassListView extends VBox implements Serializable{
         this.model = model;
     }
 
+    public void loadViewFromModel(ClassListModel model){
+
+        this.addClasses(model.getClassList());
+    }
+
     public void updateView(){
 
         listView.refresh();
