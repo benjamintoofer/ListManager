@@ -28,6 +28,7 @@ public class SubjectTreeView extends VBox implements Serializable{
         init();
     }
 
+    //Instantiate Objects
     private void init(){
 
         rootNode.setExpanded(true);
@@ -45,6 +46,7 @@ public class SubjectTreeView extends VBox implements Serializable{
     }
 
     public ContextMenu getContextMenu(){
+
         return contextMenu;
     }
 

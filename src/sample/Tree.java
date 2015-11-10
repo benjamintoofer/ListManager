@@ -42,6 +42,10 @@ public class Tree<T> implements Serializable{
 
         return this.rootNode;
     }
+
+    /*
+        Get Array List of children node in DFS in post order
+     */
     public ArrayList<T> getChildrenFromObjectPostOrder(T obj){
 
         Node<T> node = findNode(obj);
@@ -62,7 +66,9 @@ public class Tree<T> implements Serializable{
 
         return list;
     }
-
+    /*
+        Get Array List of children node in BFS
+     */
     public ArrayList<T> getChildrenFromObjectBFS(T obj){
 
         Node<T> node = findNode(obj);
@@ -85,6 +91,9 @@ public class Tree<T> implements Serializable{
         return list;
     }
 
+    /*
+        Get leaves of teh given object
+     */
     public ArrayList<T> getLeavesFromObject(T obj){
 
         Node<T> node = findNode(obj);
@@ -107,6 +116,9 @@ public class Tree<T> implements Serializable{
         return list;
     }
 
+    /*
+        Update Parent Nodes of new association made from given node
+     */
     public void updateParentAssociations(T t){
 
         Node<T> node = findNode(t);

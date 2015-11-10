@@ -36,6 +36,9 @@ public class ClassListView extends VBox implements Serializable{
         init();
     }
 
+    /*
+        Initialization
+     */
     private void init(){
 
         //Instantiate listView
@@ -140,19 +143,32 @@ public class ClassListView extends VBox implements Serializable{
     }
 
     public void addModel(ClassListModel model){
+
         this.model = model;
     }
 
+    /*
+        Update View when opening file
+     */
     public void loadViewFromModel(ClassListModel model){
 
         this.addClasses(model.getClassList());
     }
 
+    /*
+        Refresh View
+     */
     public void updateView(){
 
         listView.refresh();
     }
 
+    /*
+        Custom class for setting List View's Cell Factory
+        (Allow more customization for List View)
+
+        ****Must Override startEdit, cancelEdit, and updateEdit****
+     */
     private class CustomClassListCell extends ListCell<String>{
 
         private TextField textField;

@@ -32,6 +32,9 @@ public class RunListManager implements Serializable{
 
     private void init(){
 
+        /*
+            Instantiate Objects
+         */
         uiView = new UserInterface(1200,900);
 
         ioController = new IOController(stage);
@@ -42,13 +45,15 @@ public class RunListManager implements Serializable{
         associationModel = new AssociationModel();
         associationController = new AssociationController();
 
+        subjectTreeController = new SubjectTreeController();
+        subjectTreeModel = new SubjectTreeModel();
+
+        //////////////////////////////////////////////////////////////////////////////////////////
+
         classListController.addClassListModel(classListModel);
         classListController.addAssociationModel(associationModel);
         classListController.addClassListView(uiView.getClassListView());
 
-
-        subjectTreeController = new SubjectTreeController();
-        subjectTreeModel = new SubjectTreeModel();
 
         subjectTreeController.addSubjectTreeModel(subjectTreeModel);
         subjectTreeController.addAssociationModel(associationModel);
@@ -60,6 +65,7 @@ public class RunListManager implements Serializable{
         associationController.addSubjectTreeView(uiView.getSubjectTreeView());
 
 
+        //Add controllers, models, and views to UI
         uiView.addStage(stage);
 
         uiView.addIOControllerToFileMenu(ioController);
@@ -73,6 +79,7 @@ public class RunListManager implements Serializable{
         uiView.addAssociationController(associationController);
         uiView.addAssociationModel(associationModel);
 
+        //Add controllers, models, and views to IOController
         ioController.addRunListManager(this);
         ioController.addSubjectTreeView(uiView.getSubjectTreeView());
         ioController.addClassListView(uiView.getClassListView());

@@ -38,6 +38,7 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
     private transient MenuItem saveMenuItem;
     private transient MenuItem saveAsMenuItem;
     private transient MenuItem openMenuItem;
+    private transient MenuItem exportMenuItem;
 
 
     //Console View
@@ -62,6 +63,8 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         saveAsMenuItem.setId("save_as_item");
         openMenuItem = new MenuItem("Open...");
         openMenuItem.setId("open_item");
+        exportMenuItem = new MenuItem("Export...");
+        exportMenuItem.setId("export_item");
 
         //Instantiate Menu
         fileMenu = new Menu("File");
@@ -71,7 +74,7 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         //Instantiate Menu Bar
         menuBar = new MenuBar();
         menuBar.setVisible(true);
-        fileMenu.getItems().addAll(openMenuItem, saveMenuItem, saveAsMenuItem);
+        fileMenu.getItems().addAll(openMenuItem, saveMenuItem, saveAsMenuItem,exportMenuItem);
 
 
         this.setPrefSize(winWidth, winHeight);
@@ -181,6 +184,7 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         saveAsMenuItem.setOnAction(controller);
         saveMenuItem.setOnAction(controller);
         openMenuItem.setOnAction(controller);
+        exportMenuItem.setOnAction(controller);
     }
 
     public void updateView(){
