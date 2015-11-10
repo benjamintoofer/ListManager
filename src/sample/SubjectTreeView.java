@@ -120,17 +120,19 @@ public class SubjectTreeView extends VBox implements Serializable{
         Queue<TreeItem<Subject>> queue = new LinkedList<TreeItem<Subject>>();
         Subject currentSubject = model.getRootNode();
         int numChildren = currentSubject.getNumberOfChildren();
-        int index = 1;
+        int childIndex = 1;
+        int index = 0;
 
         ArrayList<Subject> childrenList = model.getChildrenFromNodeBFS(currentSubject);
-        TreeItem<Subject> currentTreeItem = new TreeItem<Subject>(currentSubject);
+        TreeItem<Subject> rootNode = new TreeItem<Subject>(currentSubject);
+        TreeItem<Subject> currentTreeItem = rootNode;
         queue.add(currentTreeItem);
-        treeView.setRoot(currentTreeItem);
+        //treeView.setRoot(currentTreeItem);
 
         System.out.println("LOADED LIST");
         for(Subject s : childrenList){
 
-            System.out.println(s.getName());
+            System.out.println(s.getName() + "Number of children: "+s.getNumberOfChildren());
         }
 
         while(!queue.isEmpty()){
@@ -141,14 +143,27 @@ public class SubjectTreeView extends VBox implements Serializable{
             currentTreeItem = queue.poll();
 
             //Add children to Queue
-            for(int i = 0; i < numChildren; i++){
+            if(numChildren != 0){
+                for(int i = 0; i < numChildren; i++){
 
-                Subject subjectToAdd = childrenList.get(index);
-                TreeItem<Subject >newTreeItem = new TreeItem<Subject>(subjectToAdd);
-                queue.add(newTreeItem);
-                currentTreeItem.getChildren().add(new TreeItem<Subject>(subjectToAdd));
+                    Subject subjectToAdd = childrenList.get(childIndex);
+                    TreeItem<Subject >newTreeItem = new TreeItem<Subject>(subjectToAdd);
+                    queue.add(newTreeItem);
+                    currentTreeItem.getChildren().add(newTreeItem);
+                    childIndex++;
+                }
                 index++;
+            }else{
+
+                for(TreeItem<Subject> t : queue){
+
+                    t.getValue().setNumberOfAssociationsMade(t.getValue().getNumberOfChildrenAssociated());
+                    model.updateTreeColorAssociation(t.getValue());
+
+                }
+
             }
+
 
             System.out.println("Current State of Queue: "+currentTreeItem.getValue().getName()+" Number of Child "+numChildren);
             for(TreeItem<Subject> t : queue){
@@ -156,6 +171,7 @@ public class SubjectTreeView extends VBox implements Serializable{
             }
         }
 
+        treeView.setRoot(rootNode);
         treeView.refresh();
         //treeView.setRoot();
     }

@@ -26,6 +26,12 @@ public class ClassListModel extends Observable implements Serializable{
         if(classList == null)
             classList = new ArrayList<Class>();
 
+        for(Class c : classList){
+            if(c.getClassName().equals(newClass.getClassName())){
+
+                return;
+            }
+        }
         classList.add(newClass);
         Collections.sort(classList,new Comparator<Class>() {
             @Override

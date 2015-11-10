@@ -23,6 +23,10 @@ public class Class implements Serializable{
         new Class("","");
     }
 
+    public boolean equals(Class c, String s){
+
+        return c.getClassName().equals(s);
+    }
 	//Getters and Setters
 	public String getClassName() {
 		return className;

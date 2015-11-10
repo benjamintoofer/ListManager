@@ -74,7 +74,14 @@ public class IOController extends Observable implements EventHandler<ActionEvent
                     FileInputStream fileIn = new FileInputStream(savedPath);
                     ObjectInputStream in = new ObjectInputStream(fileIn);
                     rlm = (RunListManager)in.readObject();
+
                     subjectTreeView.loadViewFromModel(rlm.getSubjectTreeModel());
+                    classListView.loadViewFromModel(rlm.getClassListModel());
+                    associationModel = rlm.getAssociationModel();
+
+                    System.out.println("SUBJECT TREE:\n"+subjectTreeModel.printTree());
+                    //System.out.println("ASSOCIATIONS LOADED:\n"+rlm.getAssociationModel().printAssociations());
+
                     in.close();
                     fileIn.close();
 
