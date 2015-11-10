@@ -426,10 +426,12 @@ public class IOUtil {
         //ADD CLASS LIST
     }
 
-    public static void exportTxt(String fileName, ArrayList<Subject> subjects) throws IOException {
+    public static void exportTxt(String fileName, RunListManager man) throws IOException {
         File f = new File(fileName);
         BufferedWriter writer = new BufferedWriter(new FileWriter(f));
 
+        writer.flush();
+        writer.close();
     }
 
 }
