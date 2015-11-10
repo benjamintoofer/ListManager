@@ -63,19 +63,23 @@ public class Tree<T> implements Serializable{
         return list;
     }
 
-    public ArrayList<T> getChildrenFromObjectPreOrder(T obj){
+    public ArrayList<T> getChildrenFromObjectBFS(T obj){
 
         Node<T> node = findNode(obj);
         ArrayList<T> list = new ArrayList<T>();
+        list.add(node.getData());
 
-        return getChildrenFromObjectPreOrder(node,list);
+        return getChildrenFromObjectBFS(node,list);
     }
 
-    private ArrayList<T> getChildrenFromObjectPreOrder(Node<T> node, ArrayList<T> list){
+    private ArrayList<T> getChildrenFromObjectBFS(Node<T> node, ArrayList<T> list){
 
-        list.add(node.getData());
+
         for(Node<T> n : node.getChildren()){
-            getChildrenFromObjectPostOrder(n,list);
+            list.add(n.getData());
+        }
+        for(Node<T> n : node.getChildren()){
+            getChildrenFromObjectBFS(n,list);
         }
 
         return list;

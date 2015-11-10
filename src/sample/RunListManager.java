@@ -96,7 +96,7 @@ public class RunListManager implements Serializable{
 
     public void updateView(){
 
-        uiView.getSubjectTreeView().loadViewFromModel(subjectTreeModel);
+        //uiView.getSubjectTreeView().loadViewFromModel(subjectTreeModel);
         System.out.println("FUCKKKK "+subjectTreeModel.printTree());
         uiView.getClassListView().addModel(classListModel);
         uiView.updateView();
@@ -105,5 +105,10 @@ public class RunListManager implements Serializable{
     public IOController getIoController(){
 
         return ioController;
+    }
+
+    public SubjectTreeModel getSubjectTreeModel(){
+
+        return subjectTreeModel;
     }
 }

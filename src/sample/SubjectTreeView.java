@@ -117,29 +117,46 @@ public class SubjectTreeView extends VBox implements Serializable{
 
     public void loadViewFromModel(SubjectTreeModel model){
 
-        Queue<Subject> queue = new LinkedList<Subject>();
+        Queue<TreeItem<Subject>> queue = new LinkedList<TreeItem<Subject>>();
         Subject currentSubject = model.getRootNode();
-        queue.add(currentSubject);
         int numChildren = currentSubject.getNumberOfChildren();
-        int index = 0;
+        int index = 1;
 
-        ArrayList<Subject> childrenList = model.getChildrenFromNodePreOrder(currentSubject);
+        ArrayList<Subject> childrenList = model.getChildrenFromNodeBFS(currentSubject);
         TreeItem<Subject> currentTreeItem = new TreeItem<Subject>(currentSubject);
+        queue.add(currentTreeItem);
         treeView.setRoot(currentTreeItem);
+
+        System.out.println("LOADED LIST");
+        for(Subject s : childrenList){
+
+            System.out.println(s.getName());
+        }
 
         while(!queue.isEmpty()){
 
-            int level = treeView.getTreeItemLevel(currentTreeItem);
-            currentTreeItem = treeView.getTreeItem(level);
+            /*int level = treeView.getTreeItemLevel(currentTreeItem);
+            currentTreeItem = treeView.getTreeItem(level);*/
+            numChildren = childrenList.get(index).getNumberOfChildren();
+            currentTreeItem = queue.poll();
 
             //Add children to Queue
             for(int i = 0; i < numChildren; i++){
-                queue.add(childrenList.get(index));
+
+                Subject subjectToAdd = childrenList.get(index);
+                TreeItem<Subject >newTreeItem = new TreeItem<Subject>(subjectToAdd);
+                queue.add(newTreeItem);
+                currentTreeItem.getChildren().add(new TreeItem<Subject>(subjectToAdd));
                 index++;
+            }
+
+            System.out.println("Current State of Queue: "+currentTreeItem.getValue().getName()+" Number of Child "+numChildren);
+            for(TreeItem<Subject> t : queue){
+                System.out.println(t.getValue().getName());
             }
         }
 
-
+        treeView.refresh();
         //treeView.setRoot();
     }
 
