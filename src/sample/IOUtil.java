@@ -6,6 +6,10 @@ import java.util.Scanner;
 
 /**
  * Created by Andrew on 11/4/15.
+ *
+ * This is an experimental add-on feature that is not yet completed (not required)
+ *
+ * The only required functionality (exportTxt) is located at the bottom of the class.
  */
 public class IOUtil {
 // TODO: remove static main upon full impl, change parser to static
@@ -401,7 +405,7 @@ public class IOUtil {
                 if (temp.contains(":")) {
                     split = temp.split(":");
                     //ADD TOPIC split[0]
-                    subjects.add(new Subject(split[0], ))
+
                     //ADD ASSOC split[1]
                     assoc = split[1].split(",");
                     for (int i = 0; i < assoc.length; i++) {
@@ -418,11 +422,14 @@ public class IOUtil {
         return subjects;
     }
 
-    public static void exportTxt(String fileName, ArrayList<Subject> subjects) {
-
-    }
-
-    public static void importClasses(ArrayList<Class> classes) {
+    private static void importClasses(ArrayList<Class> classes) {
         //ADD CLASS LIST
     }
+
+    public static void exportTxt(String fileName, ArrayList<Subject> subjects) throws IOException {
+        File f = new File(fileName);
+        BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+
+    }
+
 }
