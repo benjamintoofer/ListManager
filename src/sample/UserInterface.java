@@ -90,7 +90,7 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         menuBar.setVisible(true);
 
         fileMenu.getItems().addAll(openMenuItem, saveMenuItem, saveAsMenuItem,exportMenuItem);
-        viewMenu.getItems().addAll(showAssociatedMenuItem,showUnAssociatedMenuItem);
+        viewMenu.getItems().addAll(showUnAssociatedMenuItem);
 
         this.setPrefSize(winWidth, winHeight);
         menuBar.setPrefSize(winWidth,40);
@@ -321,7 +321,6 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
                 Class selectedClass = classListModel.getClassByName(tempClass);
 
                 if( selectedSubject != null){
-                    System.out.println("Subject Displayed");
 
                     ArrayList<Association> list = associationModel.queryBySubject(selectedSubject);
                     newString.append("Subject: "+selectedSubject.getName()+"\n\n");
@@ -334,7 +333,6 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
                 }
 
                 if(selectedClass != null){
-                    System.out.println("Class Displayed");
 
                     ArrayList<Association> list = associationModel.queryByClass(selectedClass);
                     newString.append("Class: "+ selectedClass.getClassName()+"\n\n");

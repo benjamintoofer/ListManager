@@ -150,24 +150,26 @@ public class SubjectTreeView extends VBox implements Serializable{
                 for(int i = 0; i < numChildren; i++){
 
                     Subject subjectToAdd = childrenList.get(childIndex);
+                    System.out.print("Subjet to add: "+subjectToAdd.getName()+" Num of Child "+subjectToAdd.getNumberOfChildren());
                     TreeItem<Subject >newTreeItem = new TreeItem<Subject>(subjectToAdd);
                     queue.add(newTreeItem);
                     currentTreeItem.getChildren().add(newTreeItem);
                     childIndex++;
                 }
-                index++;
+
             }else{
 
-                for(TreeItem<Subject> t : queue){
+                model.updateTreeColorAssociation(currentTreeItem.getValue());
+                /*for(TreeItem<Subject> t : queue){
 
                     t.getValue().setNumberOfAssociationsMade(t.getValue().getNumberOfChildrenAssociated());
                     model.updateTreeColorAssociation(t.getValue());
 
-                }
+                }*/
 
             }
 
-
+            index++;
             System.out.println("Current State of Queue: " + currentTreeItem.getValue().getName() + " Number of Child " + numChildren);
             for(TreeItem<Subject> t : queue){
                 System.out.println(t.getValue().getName());
@@ -181,7 +183,7 @@ public class SubjectTreeView extends VBox implements Serializable{
 
     public void expandAssociatedNodes(boolean showAssociated){
 
-        ArrayList<Subject> list = model.getChildrenFromNodeBFS(model.getRootNode());
+        ArrayList<Subject> list;
         Queue<TreeItem<Subject>> queue = new LinkedList<TreeItem<Subject>>();
         TreeItem<Subject> treeItem = treeView.getRoot();
         queue.add(treeItem);
@@ -189,10 +191,10 @@ public class SubjectTreeView extends VBox implements Serializable{
 
         if(!showAssociated){
 
+            list = model.getChildrenFromNodeBFS(model.getRootNode());
             for(Subject s : list){
 
                 treeItem = queue.poll();
-                System.out.println("Current Tree item "+treeItem.getValue().getName()+" Current Subject: "+s.getName());
 
                 if(s.getNumberOfChildren() > 0 && s.getNumberOfChildrenAssociated() < s.getNumberOfChildren()){
 
@@ -208,6 +210,31 @@ public class SubjectTreeView extends VBox implements Serializable{
                         queue.add(t);
                     }
                 }
+
+            }
+        }else{
+            list = model.getLeavesFromNode(model.getRootNode());
+
+            for(Subject s : list){
+
+                Tree.Node<Subject> node = model.findNode(s);
+                //treeView.get
+                /*treeItem = queue.poll();
+
+                if(s.getNumberOfChildren() > 0 && s.getNumberOfChildrenAssociated() > 0){
+
+                    treeItem.setExpanded(true);
+                }else{
+                    treeItem.setExpanded(false);
+                }
+
+                if(!treeItem.getChildren().isEmpty()){
+
+                    for(TreeItem<Subject> t : treeItem.getChildren()){
+
+                        queue.add(t);
+                    }
+                }*/
 
             }
         }
@@ -269,14 +296,20 @@ public class SubjectTreeView extends VBox implements Serializable{
                         text = new Text(this.getItem().getNumberOfAssociationsMade()+"");
 
                 }else{
+
                     text = new Text (this.getItem().getNumberOfChildrenAssociated()+"/"+this.getItem().getNumberOfChildren());
                 }
+
+
                 text.setBoundsType(TextBoundsType.VISUAL);
                 StackPane stack = new StackPane();
                 stack.getChildren().add(circle);
                 stack.getChildren().add(text);
                 circle.setFill(this.getTreeItem().getValue().getCurrentColor());
-                setGraphic(stack);
+
+                if(!this.getTreeView().getRoot().getValue().equals(this.getItem())){
+                    setGraphic(stack);
+                }
 
 
             }else{
@@ -327,12 +360,17 @@ public class SubjectTreeView extends VBox implements Serializable{
                     }else{
                         text = new Text (this.getItem().getNumberOfChildrenAssociated()+"/"+this.getItem().getNumberOfChildren());
                     }
+
                     text.setBoundsType(TextBoundsType.VISUAL);
                     StackPane stack = new StackPane();
                     stack.getChildren().add(circle);
                     stack.getChildren().add(text);
                     circle.setFill(this.getTreeItem().getValue().getCurrentColor());
-                    setGraphic(stack);
+
+                    if(!this.getTreeView().getRoot().getValue().equals(this.getItem())){
+                        setGraphic(stack);
+                    }
+
 
                     setContextMenu(contextMenu);
                 }

@@ -35,9 +35,9 @@ public class SubjectTreeModel extends Observable implements Serializable{
         return rootNode;
     }
 
-    public void findNode(Subject s){
+    public Tree.Node<Subject> findNode(Subject s){
 
-        //return tree.findNode(s);
+        return tree.findNode(s);
     }
     public void setSubjectAssociated(Subject subject, boolean value){
 

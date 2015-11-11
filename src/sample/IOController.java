@@ -126,7 +126,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
 
                 }catch(ClassNotFoundException c)
                 {
-                    System.out.println("Employee class not found");
+                    System.out.println("Model objects not found");
                     c.printStackTrace();
                     return;
                 }

@@ -159,7 +159,6 @@ public class Tree<T> implements Serializable{
 
             }
             ((Subject)node.getData()).setNumberOfChildrenAssociated(counter);
-            System.out.println("Node Name: "+((Subject)node.getData()).getName()+" "+((Subject)node.getData()).getNumberOfChildrenAssociated());
             updateParentAssociations(node.getParent());
         }
     }
@@ -284,8 +283,9 @@ public class Tree<T> implements Serializable{
     public String printTree(){
 
         StringBuilder newString = new StringBuilder();
-        newString.append(rootNode.toString());
+        newString.append(rootNode.toString()+" "+((Subject)rootNode.getData()).getNumberOfChildrenAssociated()+"/"+((Subject)rootNode.getData()).getNumberOfChildren());
         ArrayList<Node<T>> list = (ArrayList<Node<T>>) rootNode.getChildren();
+
         for(Object n : rootNode.getChildren()){
 
             newString.append(printTree(newString, (Node<T>) n, 1));
@@ -294,7 +294,7 @@ public class Tree<T> implements Serializable{
         return newString.toString();
     }
 
-    private String printTree(StringBuilder string,Node<T> node,int depth){
+    private String printTree(StringBuilder string, Node<T> node,int depth){
 
         String tab = "";
         String returnString = "";

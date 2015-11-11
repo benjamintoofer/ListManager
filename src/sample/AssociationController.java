@@ -69,7 +69,7 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
                     subjectView.getTreeView().refresh();
                 }
 
-
+                System.out.println(subjectTreeModel.printTree());
             }
             if(((Button)e.getTarget()).getId().equals("disconnect_button")){
 
