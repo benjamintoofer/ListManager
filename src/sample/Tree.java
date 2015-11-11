@@ -3,7 +3,9 @@ package sample;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * Created by benjamintoofer on 11/4/15.
@@ -80,13 +82,24 @@ public class Tree<T> implements Serializable{
 
     private ArrayList<T> getChildrenFromObjectBFS(Node<T> node, ArrayList<T> list){
 
+        Queue<Node<T>> queue = new LinkedList<Node<T>>();
+        queue.add(node);
+        Node<T> currentNode;
 
-        for(Node<T> n : node.getChildren()){
-            list.add(n.getData());
+        while(!queue.isEmpty()){
+
+            currentNode = queue.poll();
+
+            for(Node<T> n : currentNode.getChildren()){
+
+                list.add(n.getData());
+                queue.add(n);
+            }
+
+
         }
-        for(Node<T> n : node.getChildren()){
-            getChildrenFromObjectBFS(n,list);
-        }
+
+
 
         return list;
     }
@@ -110,7 +123,7 @@ public class Tree<T> implements Serializable{
         }else{
 
             for(Node<T> n : node.getChildren()){
-                getChildrenFromObjectPostOrder(n,list);
+                getLeavesFromObject(n,list);
             }
         }
         return list;
@@ -122,7 +135,7 @@ public class Tree<T> implements Serializable{
     public void updateParentAssociations(T t){
 
         Node<T> node = findNode(t);
-        updateParentAssociations(node.getParent());
+        updateParentAssociations(node);
     }
 
     private void updateParentAssociations(Node<T> node){
@@ -133,10 +146,12 @@ public class Tree<T> implements Serializable{
             for(Node<T> n : node.getChildren()){
                 if(!((Subject)n.getData()).isLeaf()){
                     if(((Subject)n.getData()).getNumberOfChildrenAssociated() == ((Subject)n.getData()).getNumberOfChildren()){
+
                         counter++;
                     }
                 }else{
                     if(((Subject)n.getData()).isAssociated()){
+
                         counter++;
                     }
 

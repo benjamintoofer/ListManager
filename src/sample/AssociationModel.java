@@ -16,12 +16,13 @@ import java.io.Serializable;
 public class AssociationModel  extends Observable implements Serializable
 {
     private Association addedAssoc = null;
+    private ArrayList<Association> associationList;
 
     public AssociationModel()
      {
          init();       
      }
-    private ArrayList<Association> associationList;
+
     
     public void init()
     {
@@ -80,20 +81,25 @@ public class AssociationModel  extends Observable implements Serializable
         ArrayList<Association> listToRemove = new ArrayList<Association>();
 
         for(Association a : associationList){
+
             if(a.getSubjectObj().equals(s) && a.getClassObj().equals(c)){
-                System.out.println("Removing Assoc: "+a.getSubjectObj()+" "+a.getClassObj());
+
+                System.out.println("Removing Assoc: "+a.getSubjectObj().getName()+" "+a.getClassObj().getClassName());
                 listToRemove.add(a);
             }
         }
 
         if(listToRemove.isEmpty()){
+
             result = false;
+
         }else {
+
             for (Association a : listToRemove) {
+
                 associationList.remove(a);
             }
         }
-
         return result;
     }
 
@@ -120,7 +126,7 @@ public class AssociationModel  extends Observable implements Serializable
         return result;
     }
 
-    public ArrayList<Association> queryByClass(String className){
+    public ArrayList<Association> queryByClass(Class className){
 
         ArrayList<Association> newList = new ArrayList<Association>();
 
@@ -130,14 +136,14 @@ public class AssociationModel  extends Observable implements Serializable
 
         for(Association a: associationList){
 
-            if(a.getClassObj().getClassName().equals(className)){
+            if(a.getClassObj().equals(className)){
                 newList.add(a);
             }
         }
         return newList;
     }
 
-    public ArrayList<Association> queryBySubject(String subjectName){
+    public ArrayList<Association> queryBySubject(Subject subject){
 
         ArrayList<Association> newList = new ArrayList<Association>();
 
@@ -147,7 +153,7 @@ public class AssociationModel  extends Observable implements Serializable
 
         for(Association a: associationList){
 
-            if(a.getSubjectObj().getName().equals(subjectName)){
+            if(a.getSubjectObj().equals(subject)){
 
                 newList.add(a);
             }
@@ -157,6 +163,7 @@ public class AssociationModel  extends Observable implements Serializable
     }
 
     public Association getAddedAssociation(){
+
         return  addedAssoc;
     }
     public String printAssociations(){

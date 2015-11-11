@@ -41,29 +41,31 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
                     if (selectedSubject.isLeaf()) {
 
                         success = associationModel.addAssociation(new Association(selectedClass, selectedSubject));
+
                         if(success){
                             subjectTreeModel.setSubjectAssociated(selectedSubject, true);
+                            subjectTreeModel.updateTreeColorAssociation(selectedSubject);
                         }
 
 
                     } else {
 
-                        childrenList = subjectTreeModel.getChildrenFromNodePostOrder(selectedSubject);
+                        childrenList = subjectTreeModel.getLeavesFromNode(selectedSubject);
                         for (Subject s : childrenList) {
 
                             success = associationModel.addAssociation(new Association(selectedClass, s));
 
                             if (success) {
-                                System.out.println("Association CREATED!!");
-                                System.out.println(s.getName());
+                                System.out.println("Association CREATED with "+s.getName());
                                 subjectTreeModel.setSubjectAssociated(s, true);
+                                subjectTreeModel.updateTreeColorAssociation(s);
 
                             } else {
                                 System.out.println("Association CANNOT BE CREATED with: "+s.getName());
                             }
                         }
                     }
-                    subjectTreeModel.updateTreeColorAssociation(selectedSubject);
+
                     subjectView.getTreeView().refresh();
                 }
 
@@ -84,6 +86,7 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
 
                         if(success)
                             subjectTreeModel.setSubjectAssociated(selectedSubject,false);
+                            subjectTreeModel.updateTreeColorAssociation(selectedSubject);
 
                     }else{
 
@@ -92,8 +95,9 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
                         for(Subject s: childrenList){
 
                             success = associationModel.removeAssociation(s,selectedClass);
-
+                            System.out.println("RESULT FROM REMOVE "+success);
                             if(success) {
+
                                 subjectTreeModel.setSubjectAssociated(s, false);
                                 subjectTreeModel.updateTreeColorAssociation(s);
                             }

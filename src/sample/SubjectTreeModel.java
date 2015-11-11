@@ -1,6 +1,8 @@
 package sample;
 
 
+import javafx.scene.control.TreeItem;
+
 import java.util.ArrayList;
 import java.util.Observable;
 import java.io.Serializable;
@@ -32,11 +34,17 @@ public class SubjectTreeModel extends Observable implements Serializable{
 
         return rootNode;
     }
+
+    public void findNode(Subject s){
+
+        //return tree.findNode(s);
+    }
     public void setSubjectAssociated(Subject subject, boolean value){
 
         Tree.Node<Subject> foundNode = tree.findNode(subject);
 
         int numAss = foundNode.getData().getNumberOfAssociationsMade();
+
         if(!value){
 
             if(numAss > 0)
@@ -54,6 +62,7 @@ public class SubjectTreeModel extends Observable implements Serializable{
 
         int counter = 0;
 
+        //Figure out how many children nodes have been associated
         for(Tree.Node<Subject> n : foundNode.getChildren()){
             if(n.getData().isAssociated()){
                 counter++;
@@ -66,9 +75,14 @@ public class SubjectTreeModel extends Observable implements Serializable{
     }
     public void updateTreeColorAssociation(Subject s){
 
+        System.out.print(s.getName()+" + ");
         tree.updateParentAssociations(s);
     }
 
+    public ArrayList<Subject> getLeavesFromNode(Subject subject){
+
+        return tree.getLeavesFromObject(subject);
+    }
     public ArrayList<Subject> getChildrenFromNodePostOrder(Subject subject){
 
         return tree.getChildrenFromObjectPostOrder(subject);

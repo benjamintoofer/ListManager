@@ -82,6 +82,11 @@ public class ClassListView extends VBox implements Serializable{
         ////////
     }
 
+    public ListView<String> getListView(){
+
+        return listView;
+    }
+
     public void removeCourse(ArrayList<Class> list){
 
             listView.getItems().removeAll(listView.getItems());
@@ -124,6 +129,7 @@ public class ClassListView extends VBox implements Serializable{
     }
 
     public String getSelectedClassByString(){
+
         return listView.getSelectionModel().getSelectedItem();
     }
 
@@ -247,6 +253,7 @@ public class ClassListView extends VBox implements Serializable{
         }
 
         private String getString(){
+
             return (getItem() == null ? "" : getItem().toString());
         }
 

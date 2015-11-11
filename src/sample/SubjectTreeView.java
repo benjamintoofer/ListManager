@@ -107,6 +107,7 @@ public class SubjectTreeView extends VBox implements Serializable{
     }
 
     public void updateTree(){
+
         treeView.refresh();
     }
 
@@ -167,7 +168,7 @@ public class SubjectTreeView extends VBox implements Serializable{
             }
 
 
-            System.out.println("Current State of Queue: "+currentTreeItem.getValue().getName()+" Number of Child "+numChildren);
+            System.out.println("Current State of Queue: " + currentTreeItem.getValue().getName() + " Number of Child " + numChildren);
             for(TreeItem<Subject> t : queue){
                 System.out.println(t.getValue().getName());
             }
@@ -176,6 +177,40 @@ public class SubjectTreeView extends VBox implements Serializable{
         treeView.setRoot(rootNode);
         treeView.refresh();
         //treeView.setRoot();
+    }
+
+    public void expandAssociatedNodes(boolean showAssociated){
+
+        ArrayList<Subject> list = model.getChildrenFromNodeBFS(model.getRootNode());
+        Queue<TreeItem<Subject>> queue = new LinkedList<TreeItem<Subject>>();
+        TreeItem<Subject> treeItem = treeView.getRoot();
+        queue.add(treeItem);
+
+
+        if(!showAssociated){
+
+            for(Subject s : list){
+
+                treeItem = queue.poll();
+                System.out.println("Current Tree item "+treeItem.getValue().getName()+" Current Subject: "+s.getName());
+
+                if(s.getNumberOfChildren() > 0 && s.getNumberOfChildrenAssociated() < s.getNumberOfChildren()){
+
+                    treeItem.setExpanded(true);
+                }else{
+                    treeItem.setExpanded(false);
+                }
+
+                if(!treeItem.getChildren().isEmpty()){
+
+                    for(TreeItem<Subject> t : treeItem.getChildren()){
+
+                        queue.add(t);
+                    }
+                }
+
+            }
+        }
     }
 
     private class CustomTreeCell extends TreeCell<Subject> {//MUST BE OF TYPE SUBJECT
