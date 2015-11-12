@@ -1,6 +1,6 @@
 package sample;
 
-import javafx.collections.ObservableList;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.MenuItem;
@@ -25,11 +25,12 @@ public class IOController extends Observable implements EventHandler<ActionEvent
     private SubjectTreeModel subjectTreeModel;
     private SubjectTreeView subjectTreeView;
     private ClassListView classListView;
-    private RunListManager rlm;
+    private static RunListManager rlm;
 
     public IOController(Stage stage){
 
         this.stage = stage;
+
         init();
     }
     /*
@@ -109,10 +110,10 @@ public class IOController extends Observable implements EventHandler<ActionEvent
                     ObjectInputStream in = new ObjectInputStream(fileIn);
                     rlm = (RunListManager)in.readObject();
 
+                    subjectTreeModel = rlm.getSubjectTreeModel();
                     //Assign the loaded models
                     subjectTreeView.loadViewFromModel(rlm.getSubjectTreeModel());
                     classListView.loadViewFromModel(rlm.getClassListModel());
-                    associationModel = rlm.getAssociationModel();
 
                     System.out.println("SUBJECT TREE:\n"+subjectTreeModel.printTree());
                     //System.out.println("ASSOCIATIONS LOADED:\n"+rlm.getAssociationModel().printAssociations());
@@ -130,6 +131,9 @@ public class IOController extends Observable implements EventHandler<ActionEvent
                     c.printStackTrace();
                     return;
                 }
+
+                setChanged();
+                notifyObservers();
 
             }
         }
@@ -173,5 +177,20 @@ public class IOController extends Observable implements EventHandler<ActionEvent
     public void addRunListManager(RunListManager rlm){
 
         this.rlm = rlm;
+    }
+
+    public SubjectTreeModel getSubjectTreeModel(){
+
+        return rlm.getSubjectTreeModel();
+    }
+
+    public AssociationModel getAssociationModel(){
+
+        return rlm.getAssociationModel();
+    }
+
+    public ClassListModel getClassListModel(){
+
+        return rlm.getClassListModel();
     }
 }

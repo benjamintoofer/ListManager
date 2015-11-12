@@ -116,6 +116,7 @@ public class AssociationModel  extends Observable implements Serializable
         }
 
         if(listToRemove.isEmpty()){
+
             result = false;
         }else {
             for (Association a : listToRemove) {

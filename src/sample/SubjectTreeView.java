@@ -1,6 +1,7 @@
 package sample;
 
 
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -127,8 +128,10 @@ public class SubjectTreeView extends VBox implements Serializable{
         int index = 0;
 
         ArrayList<Subject> childrenList = model.getChildrenFromNodeBFS(currentSubject);
-        TreeItem<Subject> rootNode = new TreeItem<Subject>(currentSubject);
-        TreeItem<Subject> currentTreeItem = rootNode;
+        TreeItem<Subject> root = new TreeItem<Subject>(currentSubject);
+        //treeView = new TreeView<>(root);
+        treeView.setRoot(root);
+        TreeItem<Subject> currentTreeItem = root;
         queue.add(currentTreeItem);
         //treeView.setRoot(currentTreeItem);
 
@@ -150,7 +153,6 @@ public class SubjectTreeView extends VBox implements Serializable{
                 for(int i = 0; i < numChildren; i++){
 
                     Subject subjectToAdd = childrenList.get(childIndex);
-                    System.out.print("Subjet to add: "+subjectToAdd.getName()+" Num of Child "+subjectToAdd.getNumberOfChildren());
                     TreeItem<Subject >newTreeItem = new TreeItem<Subject>(subjectToAdd);
                     queue.add(newTreeItem);
                     currentTreeItem.getChildren().add(newTreeItem);
@@ -160,13 +162,6 @@ public class SubjectTreeView extends VBox implements Serializable{
             }else{
 
                 model.updateTreeColorAssociation(currentTreeItem.getValue());
-                /*for(TreeItem<Subject> t : queue){
-
-                    t.getValue().setNumberOfAssociationsMade(t.getValue().getNumberOfChildrenAssociated());
-                    model.updateTreeColorAssociation(t.getValue());
-
-                }*/
-
             }
 
             index++;
@@ -176,7 +171,14 @@ public class SubjectTreeView extends VBox implements Serializable{
             }
         }
 
-        treeView.setRoot(rootNode);
+
+
+
+        //rootNode = root;
+        //treeView = new TreeView<>(root);
+        //treeView.setEditable(true);
+        //treeView.setRoot(root);
+        //treeView.setCellFactory((TreeView<Subject> p) -> new CustomTreeCell());
         treeView.refresh();
         //treeView.setRoot();
     }

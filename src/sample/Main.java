@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Main extends Application implements Observer{
+public class Main extends Application {
 
     static RunListManager RLM;
     @Override
@@ -19,7 +19,7 @@ public class Main extends Application implements Observer{
         //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
 
         RLM = new RunListManager(primaryStage);
-        RLM.getIoController().addObserver(this);
+        RLM.getIoController().addObserver(RLM);
         Scene scene = new Scene(RLM.getUIView(), RLM.getUIView().getWinWidth(), RLM.getUIView().getWinHeight());
 
         //Scene scene
@@ -33,13 +33,6 @@ public class Main extends Application implements Observer{
         Application.launch(args);
     }
 
-    @Override
-    public void update(Observable o, Object arg)
-    {
-        System.out.println("Assigning RLM");
-        RLM = (RunListManager)arg;
-        RLM.updateView();
-    }
 }
 
 

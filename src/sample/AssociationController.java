@@ -59,6 +59,7 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
                                 System.out.println("Association CREATED with "+s.getName());
                                 subjectTreeModel.setSubjectAssociated(s, true);
                                 subjectTreeModel.updateTreeColorAssociation(s);
+                                System.out.println("Updated tree with new association!!");
 
                             } else {
                                 System.out.println("Association CANNOT BE CREATED with: "+s.getName());

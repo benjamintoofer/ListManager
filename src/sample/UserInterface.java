@@ -294,7 +294,7 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
                 String className = associationModel.getAddedAssociation().getClassObj().getClassName();
                 String subjectName = associationModel.getAddedAssociation().getSubjectObj().getName();
                 subjectTreeView.updateTree();
-                textArea.setText("Association just created between Class: "+className+" with Subject: "+subjectName);
+                textArea.setText("Association just created");
 
             }
         }

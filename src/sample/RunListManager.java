@@ -3,11 +3,13 @@ package sample;
 import javafx.stage.Stage;
 
 import java.io.Serializable;
+import java.util.Observable;
+import java.util.Observer;
 
 /**
  * Created by benjamintoofer on 11/2/15.
  */
-public class RunListManager implements Serializable{
+public class RunListManager implements Serializable,Observer{
 
     private UserInterface uiView;
     private ClassListController classListController;
@@ -28,6 +30,7 @@ public class RunListManager implements Serializable{
 
         this.stage = stage;
         init();
+        setUpMVC();
     }
 
     private void init(){
@@ -48,7 +51,10 @@ public class RunListManager implements Serializable{
         subjectTreeController = new SubjectTreeController();
         subjectTreeModel = new SubjectTreeModel();
 
-        //////////////////////////////////////////////////////////////////////////////////////////
+
+    }
+
+    private void setUpMVC(){
 
         classListController.addClassListModel(classListModel);
         classListController.addAssociationModel(associationModel);
@@ -91,9 +97,6 @@ public class RunListManager implements Serializable{
         subjectTreeModel.addObserver(uiView);
         associationModel.addObserver(uiView);
 
-
-
-
     }
 
     public UserInterface getUIView(){
@@ -127,5 +130,17 @@ public class RunListManager implements Serializable{
     public ClassListModel getClassListModel(){
 
         return classListModel;
+    }
+
+    @Override
+    public void update(Observable o, Object arg)
+    {
+        System.out.println("UPDATING RLM SBJECT MODEL");
+        subjectTreeModel = ioController.getSubjectTreeModel();
+        classListModel = ioController.getClassListModel();
+        associationModel = ioController.getAssociationModel();
+        setUpMVC();
+        //uiView
+        //associationController.addSubjectTreeModel(subjectTreeModel);
     }
 }

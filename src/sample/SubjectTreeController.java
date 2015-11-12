@@ -19,8 +19,8 @@ public class SubjectTreeController implements EventHandler<ActionEvent>, Seriali
     private AssociationModel associationModel;
     private SubjectTreeView subjectTreeView;
 
-    private transient DialogBox addClassDialogBox = new DialogBox("Class",true);
-    private transient DialogBox removeClassDialogBox = new DialogBox("Class",false);
+    private transient DialogBox addClassDialogBox = new DialogBox("Subject",true);
+    private transient DialogBox removeClassDialogBox = new DialogBox("Subject",false);
 
     @Override
     public void handle(ActionEvent e)
