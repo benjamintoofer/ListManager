@@ -58,6 +58,8 @@ public class RunListManager implements Serializable,Observer{
 
         classListController.addClassListModel(classListModel);
         classListController.addAssociationModel(associationModel);
+        classListController.addSubjectTreeModel(subjectTreeModel);
+        classListController.addSubjectTreeView(uiView.getSubjectTreeView());
         classListController.addClassListView(uiView.getClassListView());
 
 

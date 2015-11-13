@@ -88,6 +88,11 @@ public class SubjectTreeModel extends Observable implements Serializable{
         return tree.getChildrenFromObjectPostOrder(subject);
     }
 
+    public ArrayList<Subject> getChildrenFromNodePreOrder(Subject subject){
+
+        return tree.getChildrenFromObjectPreOrder(subject);
+    }
+
     public ArrayList<Subject> getChildrenFromNodeBFS(Subject subject){
 
         return tree.getChildrenFromObjectBFS(subject);

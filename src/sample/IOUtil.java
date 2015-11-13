@@ -2,6 +2,8 @@ package sample;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Scanner;
 
 /**
@@ -431,12 +433,81 @@ public class IOUtil {
     }
 
     // This function will traverse the association tree(s) created in the model object and print them in a readable fashion
-    public static void exportTxt(String fileName, RunListManager man) throws IOException {
-        File f = new File(fileName);
+    public static void exportTxt(File file, RunListManager man) throws IOException {
+        File f = file;
         BufferedWriter writer = new BufferedWriter(new FileWriter(f));
 
+        /*
+            Print classes
+         */
+        writer.write("Classes:\n");
+
+        //Get list of class and loop through each class and print their name and description
+        ArrayList<Class> classList = man.getClassListModel().getClassList();
+
+        for(Class c : classList){
+
+            writer.write("Name: "+c.getClassName()+"\nDescription: "+c.getClassDescription()+"\n");
+        }
+
+        /*
+            Print Subjects
+         */
+        writer.write("\n\nSubjects:\n\n");
+
+        Subject rootSubject = man.getSubjectTreeModel().getRootNode();
+        ArrayList<Subject> subjectList = man.getSubjectTreeModel().getChildrenFromNodePreOrder(rootSubject);
+        Queue<Subject> queue = new LinkedList<Subject>();
+        int index = 1;
+        int numChildren = 0;
+        String path;
+
+        queue.add(subjectList.get(0));
+
+        for(Subject s : subjectList){
+
+            //Subject currentSubject = queue.poll();
+            ArrayList<Association> assocList = man.getAssociationModel().queryBySubject(s);
+            //numChildren = s.getNumberOfChildren();
+
+            String indents = "";
+            path = s.getPath();
+
+            //Find the depth of the subject in the subject's path
+            for(int i = 0; i < path.length();i++){
+                if(path.charAt(i) == '.')
+                    indents = indents + "\t";
+            }
 
 
+            /*for(int i = 0; i < numChildren; i++){
+
+                queue.add(subjectList.get(index));
+                index++;
+            }*/
+
+            writer.write(indents +"- Name: "+s.getName()+"\n"+indents+"Description: "+s.getDescription()+"\n"+indents+"Associations: ");
+
+
+            StringBuilder assocString = new StringBuilder();
+            if(!assocList.isEmpty()){
+
+                for(Association a : assocList){
+
+                    assocString.append(a.getClassObj().getClassName()+", ");
+
+                }
+                int lastIndex = assocString.lastIndexOf(",");
+
+                //assocString.
+                assocString.replace(lastIndex,lastIndex+1,"\n");
+            }else{
+                assocString.append("\n");
+            }
+
+            writer.write(assocString.toString());
+
+        }
 
         writer.flush();
         writer.close();

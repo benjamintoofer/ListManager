@@ -51,13 +51,19 @@ public class IOController extends Observable implements EventHandler<ActionEvent
          */
         if(((MenuItem)e.getTarget()).getId().equals("export_item")){
 
+            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Text", "*.txt"));
+            fileChooser.setTitle("Export File");
             File fileToExport = fileChooser.showSaveDialog(stage);
 
-            /*try{
 
-            }catch(){
+            try{
 
-            }*/
+                IOUtil.exportTxt(fileToExport,rlm);
+
+            }catch(IOException ex){
+
+                System.err.println(ex.getMessage());
+            }
 
             System.out.println("EXPORTING");
         }

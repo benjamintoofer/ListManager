@@ -55,6 +55,8 @@ public class SubjectTreeController implements EventHandler<ActionEvent>, Seriali
                     Subject subjectToRemove = subjectTreeView.getSelectedTreeItem();
                     if(subjectTreeView.getSelectedTreeItem().isLeaf()){
 
+                        subjectTreeModel.setSubjectAssociated(subjectToRemove,false);
+                        subjectTreeModel.updateTreeColorAssociation(subjectToRemove);
                         associationModel.removeAssociation(subjectToRemove);
 
 
@@ -63,6 +65,7 @@ public class SubjectTreeController implements EventHandler<ActionEvent>, Seriali
                         ArrayList<Subject> childrenList = subjectTreeModel.getChildrenFromNodePostOrder(subjectToRemove);
                         for(Subject s: childrenList){
                             subjectTreeModel.setSubjectAssociated(s,false);
+                            subjectTreeModel.updateTreeColorAssociation(s);
                             associationModel.removeAssociation(s);
                         }
 

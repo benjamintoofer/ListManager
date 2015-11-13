@@ -68,6 +68,31 @@ public class Tree<T> implements Serializable{
 
         return list;
     }
+
+    /*
+        Get Array List of children node in DFS in post order
+     */
+    public ArrayList<T> getChildrenFromObjectPreOrder(T obj){
+
+        Node<T> node = findNode(obj);
+        ArrayList<T> list = new ArrayList<T>();
+
+        return getChildrenFromObjectPreOrder(node,list);
+
+    }
+
+    private ArrayList<T> getChildrenFromObjectPreOrder(Node<T> node, ArrayList<T> list){
+
+
+        list.add(node.getData());
+
+        for(Node<T> n : node.getChildren()){
+            getChildrenFromObjectPreOrder(n,list);
+        }
+
+
+        return list;
+    }
     /*
         Get Array List of children node in BFS
      */

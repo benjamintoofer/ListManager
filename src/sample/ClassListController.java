@@ -9,6 +9,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.MenuItem;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Optional;
 
 /**
@@ -17,8 +18,10 @@ import java.util.Optional;
 public class ClassListController implements EventHandler<ActionEvent>, Serializable{
 
     private ClassListModel classListModel;
+    private SubjectTreeModel subjectTreeModel;
     private AssociationModel associationModel;
 
+    private SubjectTreeView subjectTreeView;
     private ClassListView classListView;
     private transient DialogBox addClassDialogBox = new DialogBox("Class",true);
     private transient DialogBox removeClassDialogBox = new DialogBox("Class",false);
@@ -53,6 +56,12 @@ public class ClassListController implements EventHandler<ActionEvent>, Serializa
                         String className = classListView.getSelectedClassByString();
                         Class c = classListModel.getClassByName(className);
 
+                        ArrayList<Association> list = associationModel.queryByClass(c);
+                        for(Association a: list){
+                            subjectTreeModel.setSubjectAssociated(a.getSubjectObj(),false);
+                            subjectTreeModel.updateTreeColorAssociation(a.getSubjectObj());
+                            subjectTreeView.updateTree();
+                        }
                         associationModel.removeAssociation(c);
                         classListModel.removeClassFromList(classListView.getSelectedClassByString());
                     }
@@ -72,6 +81,15 @@ public class ClassListController implements EventHandler<ActionEvent>, Serializa
         associationModel = model;
     }
 
+    public void addSubjectTreeModel(SubjectTreeModel model){
+
+        subjectTreeModel = model;
+    }
+
+    public void addSubjectTreeView(SubjectTreeView view){
+
+        subjectTreeView = view;
+    }
     public void addClassListModel(ClassListModel model){
 
         classListModel = model;
