@@ -447,22 +447,18 @@ public class IOUtil {
 
         for(Class c : classList){
 
-            writer.write("Name: "+c.getClassName()+"\nDescription: "+c.getClassDescription()+"\n");
+            writer.write("Name: "+c.getClassName()+"\nDescription: "+c.getClassDescription()+"\n\n");
         }
 
         /*
             Print Subjects
          */
-        writer.write("\n\nSubjects:\n\n");
+        writer.write("\n\nSubjects:\n");
 
         Subject rootSubject = man.getSubjectTreeModel().getRootNode();
         ArrayList<Subject> subjectList = man.getSubjectTreeModel().getChildrenFromNodePreOrder(rootSubject);
-        Queue<Subject> queue = new LinkedList<Subject>();
-        int index = 1;
-        int numChildren = 0;
         String path;
 
-        queue.add(subjectList.get(0));
 
         for(Subject s : subjectList){
 
@@ -480,12 +476,6 @@ public class IOUtil {
             }
 
 
-            /*for(int i = 0; i < numChildren; i++){
-
-                queue.add(subjectList.get(index));
-                index++;
-            }*/
-
             writer.write(indents +"- Name: "+s.getName()+"\n"+indents+"Description: "+s.getDescription()+"\n"+indents+"Associations: ");
 
 
@@ -499,10 +489,11 @@ public class IOUtil {
                 }
                 int lastIndex = assocString.lastIndexOf(",");
 
-                //assocString.
-                assocString.replace(lastIndex,lastIndex+1,"\n");
+                assocString.replace(lastIndex,lastIndex+1,"\n\n");
+
             }else{
-                assocString.append("\n");
+
+                assocString.append("\n\n");
             }
 
             writer.write(assocString.toString());

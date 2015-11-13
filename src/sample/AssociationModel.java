@@ -41,8 +41,11 @@ public class AssociationModel  extends Observable implements Serializable
             }
         }
 
-        associationList.add(s);
-        addedAssoc = s;
+        if(result){
+            associationList.add(s);
+            addedAssoc = s;
+        }
+
         setChanged();
         notifyObservers("add");
 

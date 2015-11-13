@@ -3,12 +3,16 @@ package sample;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.Observable;
+import java.util.Optional;
 
 /**
  * Created by benjamintoofer on 11/8/15.
@@ -17,7 +21,8 @@ public class IOController extends Observable implements EventHandler<ActionEvent
 
     private String savedPath = null;
     private transient FileChooser fileChooser;
-    private transient DialogBox dialogBox;
+
+    private transient Alert alertBox;
     private transient Stage stage;
 
     private ClassListModel classListModel;
@@ -39,7 +44,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
     private void init(){
 
         fileChooser = new FileChooser();
-        dialogBox = new DialogBox("",false);
+        alertBox = new Alert(Alert.AlertType.INFORMATION);
     }
 
     @Override
@@ -51,10 +56,8 @@ public class IOController extends Observable implements EventHandler<ActionEvent
          */
         if(((MenuItem)e.getTarget()).getId().equals("export_item")){
 
-            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Text", "*.txt"));
             fileChooser.setTitle("Export File");
             File fileToExport = fileChooser.showSaveDialog(stage);
-
 
             try{
 
@@ -62,10 +65,48 @@ public class IOController extends Observable implements EventHandler<ActionEvent
 
             }catch(IOException ex){
 
+                alertBox.setHeaderText("File Error");
+                alertBox.setContentText("Error opening file "+fileToExport.getAbsolutePath());
+                alertBox.showAndWait();
+
                 System.err.println(ex.getMessage());
             }
 
             System.out.println("EXPORTING");
+        }
+
+        /*
+        Handle Save  File
+         */
+        if(((MenuItem)e.getTarget()).getId().equals("save_item")){
+
+            if(savedPath == null){
+
+                //Display Save Dialog of FileChooser
+                fileChooser.setTitle("Save File");
+                File fileToSave = fileChooser.showSaveDialog(stage);
+
+                if(fileToSave != null){
+
+                    savedPath = setFileType(fileToSave.getAbsolutePath(),".ser");
+
+                }
+            }
+
+            //Save file
+            try{
+
+                FileOutputStream fileOut = new FileOutputStream(savedPath);
+                ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                out.writeObject(rlm);
+                out.close();
+                fileOut.close();
+
+            }catch(IOException ex){
+
+                System.out.println(ex.getCause());
+                ex.printStackTrace();
+            }
         }
 
         /*
@@ -79,7 +120,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
 
             if(fileToSave != null){
 
-                savedPath = fileToSave.getAbsolutePath();
+                savedPath = setFileType(fileToSave.getAbsolutePath(),".ser");
                 //Save file
                 try{
 
@@ -111,38 +152,83 @@ public class IOController extends Observable implements EventHandler<ActionEvent
 
                 savedPath = fileToOpen.getAbsolutePath();
 
-                try{
-                    FileInputStream fileIn = new FileInputStream(savedPath);
-                    ObjectInputStream in = new ObjectInputStream(fileIn);
-                    rlm = (RunListManager)in.readObject();
+                if(checkFileType(savedPath)){
 
-                    subjectTreeModel = rlm.getSubjectTreeModel();
-                    //Assign the loaded models
-                    subjectTreeView.loadViewFromModel(rlm.getSubjectTreeModel());
-                    classListView.loadViewFromModel(rlm.getClassListModel());
+                    try{
+                        FileInputStream fileIn = new FileInputStream(savedPath);
+                        ObjectInputStream in = new ObjectInputStream(fileIn);
+                        rlm = (RunListManager)in.readObject();
 
-                    System.out.println("SUBJECT TREE:\n"+subjectTreeModel.printTree());
-                    //System.out.println("ASSOCIATIONS LOADED:\n"+rlm.getAssociationModel().printAssociations());
+                        subjectTreeModel = rlm.getSubjectTreeModel();
+                        //Assign the loaded models
+                        subjectTreeView.loadViewFromModel(rlm.getSubjectTreeModel());
+                        classListView.loadViewFromModel(rlm.getClassListModel());
 
-                    in.close();
-                    fileIn.close();
+                        System.out.println("SUBJECT TREE:\n"+subjectTreeModel.printTree());
+                        //System.out.println("ASSOCIATIONS LOADED:\n"+rlm.getAssociationModel().printAssociations());
 
-                }catch(IOException ex){
+                        in.close();
+                        fileIn.close();
 
-                    ex.printStackTrace();
+                    }catch(IOException ex){
 
-                }catch(ClassNotFoundException c)
-                {
-                    System.out.println("Model objects not found");
-                    c.printStackTrace();
-                    return;
+                        ex.printStackTrace();
+
+                    }catch(ClassNotFoundException c)
+                    {
+                        System.out.println("Model objects not found");
+                        c.printStackTrace();
+                        return;
+                    }
+
+                    setChanged();
+                    notifyObservers();
+
+                }else{
+
+                    alertBox.setHeaderText("File Error");
+                    alertBox.setContentText("File " + savedPath + " incorrect file type\n\n Required file type of \".ser\"");
+                    alertBox.showAndWait();
+
                 }
-
-                setChanged();
-                notifyObservers();
 
             }
         }
+    }
+
+    private String setFileType(String fileName ,String fileExt){
+
+        int index = fileName.lastIndexOf(".");
+        StringBuilder newFilePath = new StringBuilder(fileName);
+
+        if(index == -1){
+
+            newFilePath.append(fileExt);
+
+        }else{
+            String sub = fileName.substring(index);
+            newFilePath.replace(index,newFilePath.length(),fileExt);
+        }
+
+        return newFilePath.toString();
+    }
+
+    private boolean checkFileType(String fileName){
+
+        boolean correctType = true;
+        int index = fileName.lastIndexOf(".");
+
+        if(index == -1){
+
+            correctType = false;
+
+        }else{
+            String sub = fileName.substring(index);
+            if(!sub.equals(".ser"))
+                correctType = false;
+        }
+
+        return correctType;
     }
 
     /*
