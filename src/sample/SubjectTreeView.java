@@ -173,12 +173,6 @@ public class SubjectTreeView extends VBox implements Serializable{
 
 
 
-
-        //rootNode = root;
-        //treeView = new TreeView<>(root);
-        //treeView.setEditable(true);
-        //treeView.setRoot(root);
-        //treeView.setCellFactory((TreeView<Subject> p) -> new CustomTreeCell());
         treeView.refresh();
         //treeView.setRoot();
     }
@@ -215,30 +209,98 @@ public class SubjectTreeView extends VBox implements Serializable{
 
             }
         }else{
+
+            //Reset Tree
+            collapseTree();
             list = model.getLeavesFromNode(model.getRootNode());
+            TreeItem<Subject> node = treeView.getRoot();
 
             for(Subject s : list){
 
-                Tree.Node<Subject> node = model.findNode(s);
-                //treeView.get
-                /*treeItem = queue.poll();
+                if(s.isAssociated()){
 
-                if(s.getNumberOfChildren() > 0 && s.getNumberOfChildrenAssociated() > 0){
+                    TreeItem<Subject> temp = findTreeItem(s);
 
-                    treeItem.setExpanded(true);
-                }else{
-                    treeItem.setExpanded(false);
+                    while(temp != null){
+
+                        temp.setExpanded(true);
+                        temp = temp.getParent();
+                    }
+
                 }
 
-                if(!treeItem.getChildren().isEmpty()){
-
-                    for(TreeItem<Subject> t : treeItem.getChildren()){
-
-                        queue.add(t);
-                    }
-                }*/
-
             }
+        }
+    }
+
+    public void expandRequestedNodes(ArrayList<Subject> list){
+
+        collapseTree();
+
+        for(Subject s: list){
+
+            TreeItem<Subject> currentItem = findTreeItem(s);
+
+            while(currentItem != null){
+
+                currentItem.setExpanded(true);
+                currentItem = currentItem.getParent();
+            }
+        }
+    }
+
+    private TreeItem<Subject> findTreeItem(Subject subjectToFind){
+
+        String path = subjectToFind.getPath();
+        TreeItem<Subject> start = treeView.getRoot();
+
+        return traverseTree(path,start);
+    }
+
+    private TreeItem<Subject> traverseTree(String path,TreeItem<Subject> treeItem){
+
+        int index = path.lastIndexOf(".");
+        String currentPosition = path.substring(index+1,path.length());
+        String subPath = path.substring(0,index);
+        int num = Integer.parseInt(currentPosition);
+        TreeItem<Subject> itemToReturn = null;
+
+        if (subPath.equals("")){
+            if(treeItem.getValue().getPosition() == num){
+                itemToReturn =  treeItem;
+            }
+
+        }else{
+
+            if(treeItem.getValue().getPosition() == num){
+                for(TreeItem<Subject> t : treeItem.getChildren()){
+                    itemToReturn =  traverseTree(subPath, t);
+
+                    if(itemToReturn != null){
+                        return itemToReturn;
+                    }
+                }
+            }
+        }
+        return itemToReturn;
+    }
+
+    public void collapseTree(){
+
+        TreeItem<Subject> node = treeView.getRoot();
+        Queue<TreeItem<Subject>> queue = new LinkedList<TreeItem<Subject>>();
+        queue.add(node);
+
+        while(!queue.isEmpty()){
+
+            TreeItem<Subject> temp = queue.poll();
+
+            for(TreeItem<Subject> t : temp.getChildren()){
+                queue.add(t);
+            }
+
+            temp.setExpanded(false);
+
         }
     }
 

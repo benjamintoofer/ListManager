@@ -9,6 +9,7 @@ package sample;
 
 
 import java.io.Serializable;
+import java.security.Key;
 import java.util.*;
 
 import javafx.event.ActionEvent;
@@ -17,6 +18,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.control.TextArea;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
 public class UserInterface extends BorderPane implements Observer,Serializable{
@@ -40,16 +43,21 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
     private transient MenuBar menuBar;
     private transient Menu fileMenu;
     private transient Menu viewMenu;
+    private transient Menu showConnectionsMenu;
+    private transient MenuItem showSubjectConnectionMenuItem;
+    private transient MenuItem showClassConnectionMenuItem;
     private transient MenuItem showAssociatedMenuItem;
     private transient MenuItem showUnAssociatedMenuItem;
+    private transient MenuItem showInfoMenuItem;
     private transient MenuItem saveMenuItem;
     private transient MenuItem saveAsMenuItem;
     private transient MenuItem openMenuItem;
     private transient MenuItem exportMenuItem;
+    private transient MenuItem resetMenuItem;
 
 
     //Console View
-    private transient TextArea textArea;
+    private static transient TextArea textArea;
 
 
     public UserInterface(int width,int height){
@@ -67,30 +75,59 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         //Instantiate Menu Items
         saveMenuItem = new MenuItem("Save");
         saveMenuItem.setId("save_item");
+        saveMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.S,KeyCombination.SHORTCUT_DOWN));
+
         saveAsMenuItem = new MenuItem("Save As...");
         saveAsMenuItem.setId("save_as_item");
+        saveAsMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHIFT_DOWN,KeyCombination.SHORTCUT_DOWN));
+
         openMenuItem = new MenuItem("Open...");
         openMenuItem.setId("open_item");
+
         exportMenuItem = new MenuItem("Export...");
         exportMenuItem.setId("export_item");
+
         showAssociatedMenuItem = new MenuItem("Show Associated");
         showAssociatedMenuItem.setId("show_associated_item");
+        showAssociatedMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.D,KeyCombination.CONTROL_DOWN));
+
         showUnAssociatedMenuItem = new MenuItem("Show Unassociated");
         showUnAssociatedMenuItem.setId("show_unassociated_item");
+        showUnAssociatedMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.F,KeyCombination.CONTROL_DOWN));
+
+        showClassConnectionMenuItem = new MenuItem("Show Class Connection");
+        showClassConnectionMenuItem.setId("show_class_connection");
+        showClassConnectionMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.J,KeyCombination.CONTROL_DOWN));
+
+        showSubjectConnectionMenuItem = new MenuItem("Show Subject Connection");
+        showSubjectConnectionMenuItem.setId("show_subject_connection");
+        showSubjectConnectionMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.K, KeyCombination.CONTROL_DOWN));
+
+        showInfoMenuItem = new MenuItem("View Information");
+        showInfoMenuItem.setId("show_information_item");
+        showInfoMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.I,KeyCombination.SHORTCUT_DOWN));
+
+        resetMenuItem = new MenuItem("Reset");
+        resetMenuItem.setId("reset_item");
+        resetMenuItem.setAccelerator(new KeyCodeCombination(KeyCode.ESCAPE,KeyCombination.SHIFT_DOWN));
 
         //Instantiate Menu
         fileMenu = new Menu("File");
         fileMenu.setVisible(true);
         viewMenu = new Menu("View");
         viewMenu.setVisible(true);
+        showConnectionsMenu = new Menu("Show Connections");
+        showConnectionsMenu.setVisible(true);
 
 
         //Instantiate Menu Bar
         menuBar = new MenuBar();
         menuBar.setVisible(true);
 
+        showConnectionsMenu.getItems().addAll(showClassConnectionMenuItem,showSubjectConnectionMenuItem);
         fileMenu.getItems().addAll(openMenuItem, saveMenuItem, saveAsMenuItem,exportMenuItem);
-        viewMenu.getItems().addAll(showUnAssociatedMenuItem);
+        viewMenu.getItems().addAll(showInfoMenuItem,showConnectionsMenu,showUnAssociatedMenuItem,showAssociatedMenuItem,resetMenuItem);
+
 
         this.setPrefSize(winWidth, winHeight);
         menuBar.setPrefSize(winWidth,40);
@@ -111,11 +148,10 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         //Instantiate Text Area
         textArea = new TextArea();
         textArea.setEditable(false);
+        textArea.setFont(Font.font("Verdana", FontWeight.BOLD, 14));
         textArea.setPrefSize(winWidth,winHeight*.3);
 
         this.setBottom(textArea);
-        this.addKeyEventHandler(new KeyEventHandler());
-        this.addViewOptionController(new ViewOptionHandler());
 
 
     }
@@ -205,17 +241,6 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         exportMenuItem.setOnAction(controller);
     }
 
-    private void addViewOptionController(ViewOptionHandler controller){
-
-        this.showAssociatedMenuItem.setOnAction(controller);
-        this.showUnAssociatedMenuItem.setOnAction(controller);
-    }
-
-    public void addKeyEventHandler(KeyEventHandler eventHandler){
-
-        this.addEventHandler(KeyEvent.KEY_RELEASED,eventHandler);
-    }
-
     public void updateView(){
 
         classListView.updateView();
@@ -300,82 +325,19 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         }
     }
 
-    /*
-        KeyEventHandler handles key events that occur on the stage
-        Handles:
-            1. ctrl+i = show information for Class or Subject or both
-            2. esc    = deselect selected item from Class List and Subject Tree
-     */
-    public class KeyEventHandler implements EventHandler<KeyEvent> {
+    public void addViewMenuController(ViewMenuController viewMenuController){
 
-        final KeyCombination combo = new KeyCodeCombination(KeyCode.I,KeyCombination.CONTROL_DOWN);
+        showAssociatedMenuItem.setOnAction(viewMenuController);
+        showUnAssociatedMenuItem.setOnAction(viewMenuController);
+        showInfoMenuItem.setOnAction(viewMenuController);
+        showClassConnectionMenuItem.setOnAction(viewMenuController);
+        showSubjectConnectionMenuItem.setOnAction(viewMenuController);
+        resetMenuItem.setOnAction(viewMenuController);
 
-        @Override
-        public void handle(KeyEvent e)
-        {
-            if(combo.match(e)){
-
-                StringBuilder newString = new StringBuilder();
-                Subject selectedSubject = subjectTreeView.getSelectedTreeItem();
-                String tempClass = classListView.getSelectedClassByString();
-                Class selectedClass = classListModel.getClassByName(tempClass);
-
-                if( selectedSubject != null){
-
-                    ArrayList<Association> list = associationModel.queryBySubject(selectedSubject);
-                    newString.append("Subject: "+selectedSubject.getName()+"\n\n");
-                    newString.append("Description: "+selectedSubject.getDescription()+"\n\n");
-                    newString.append("Associations: ");
-                    for(Association a: list){
-                        newString.append(a.getClassObj().getClassName()+", ");
-                    }
-                    newString.append("\n----------------------------------------------------------------------------------------------\n");
-                }
-
-                if(selectedClass != null){
-
-                    ArrayList<Association> list = associationModel.queryByClass(selectedClass);
-                    newString.append("Class: "+ selectedClass.getClassName()+"\n\n");
-                    newString.append("Description: "+selectedClass.getClassDescription()+"\n\n");
-                    newString.append("Associations: ");
-                    for(Association a : list){
-                        newString.append(a.getSubjectObj().getName()+", ");
-                    }
-                    newString.append("\n----------------------------------------------------------------------------------------------\n");
-                }
-
-                textArea.setText(newString.toString());
-            }
-
-            /*
-                Deselect from SubjectView and ClassView
-             */
-            if(e.getCode().equals(KeyCode.ESCAPE)){
-
-                subjectTreeView.getTreeView().getSelectionModel().select(null);
-                classListView.getListView().getSelectionModel().select(null);
-            }
-
-        }
     }
 
-    public class ViewOptionHandler implements EventHandler<ActionEvent>{
+    public static TextArea getTextArea(){
 
-        @Override
-        public void handle(ActionEvent e)
-        {
-
-            if(((MenuItem)e.getTarget()).getId().equals("show_unassociated_item")){
-
-                subjectTreeView.expandAssociatedNodes(false);
-            }
-
-            if(((MenuItem)e.getTarget()).getId().equals("show_associated_item")){
-
-                subjectTreeView.expandAssociatedNodes(true);
-            }
-        }
+        return textArea;
     }
-
-
 }

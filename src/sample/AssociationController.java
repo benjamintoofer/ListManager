@@ -68,6 +68,9 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
                     }
 
                     subjectView.getTreeView().refresh();
+                }else{
+
+                    UserInterface.getTextArea().setText("Must select a Class and a Subject");
                 }
 
                 System.out.println(subjectTreeModel.printTree());
@@ -107,6 +110,9 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
                     }
 
                     subjectView.updateTree();
+                }else{
+
+                    UserInterface.getTextArea().setText("Must select a Class and a Subject");
                 }
             }
         }

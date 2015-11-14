@@ -48,13 +48,24 @@ public class ClassListController implements EventHandler<ActionEvent>, Serializa
 
                 if(classListView.getSelectedClassByString() != null){
 
-                    removeClassDialogBox.setDialogContentText(classListView.getSelectedClassByString());
+                    String className = classListView.getSelectedClassByString();
+                    Class c = classListModel.getClassByName(className);
+
+                    StringBuilder listOfSubjects = new StringBuilder();
+                    for(Association a : associationModel.queryByClass(c)){
+
+                        listOfSubjects.append(a.getSubjectObj().getName()+", ");
+                    }
+                    if(listOfSubjects.length() > 0){
+                        listOfSubjects.replace(listOfSubjects.length()-2,listOfSubjects.length(),"");
+                    }
+                    removeClassDialogBox.setHeaderText(classListView.getSelectedClassByString());
+                    removeClassDialogBox.setContentText("Will disconnect with Subjects:\n"+listOfSubjects.toString());
                     Optional<ButtonType> result = removeClassDialogBox.showAndWait();
 
                     if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
 
-                        String className = classListView.getSelectedClassByString();
-                        Class c = classListModel.getClassByName(className);
+
 
                         ArrayList<Association> list = associationModel.queryByClass(c);
                         for(Association a: list){

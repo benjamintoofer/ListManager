@@ -146,6 +146,7 @@ public class ClassListView extends VBox implements Serializable{
             newList.add(c.getClassName());
         }
         listView.getItems().addAll(newList);
+        listView.refresh();
     }
 
     public void addModel(ClassListModel model){

@@ -19,6 +19,7 @@ public class RunListManager implements Serializable,Observer{
     private AssociationModel associationModel;
     private AssociationController associationController;
     private IOController ioController;
+    private ViewMenuController viewMenuController;
     private transient Stage stage;
 
 
@@ -41,6 +42,7 @@ public class RunListManager implements Serializable,Observer{
         uiView = new UserInterface(1200,900);
 
         ioController = new IOController(stage);
+        viewMenuController = new ViewMenuController();
 
         classListController = new ClassListController();
         classListModel = new ClassListModel();
@@ -72,11 +74,17 @@ public class RunListManager implements Serializable,Observer{
         associationController.addClassListView((uiView.getClassListView()));
         associationController.addSubjectTreeView(uiView.getSubjectTreeView());
 
+        viewMenuController.addSubjectTreeView(uiView.getSubjectTreeView());
+        viewMenuController.addClassListView(uiView.getClassListView());
+        viewMenuController.addAssociationModel(associationModel);
+        viewMenuController.addClassListModel(classListModel);
 
         //Add controllers, models, and views to UI
         uiView.addStage(stage);
 
         uiView.addIOControllerToFileMenu(ioController);
+
+        uiView.addViewMenuController(viewMenuController);
 
         uiView.addClassListController(classListController);
         uiView.addClassListModel(classListModel);

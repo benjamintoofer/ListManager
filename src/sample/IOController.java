@@ -59,20 +59,24 @@ public class IOController extends Observable implements EventHandler<ActionEvent
             fileChooser.setTitle("Export File");
             File fileToExport = fileChooser.showSaveDialog(stage);
 
-            try{
+            if(fileToExport != null){
 
-                IOUtil.exportTxt(fileToExport,rlm);
+                try{
 
-            }catch(IOException ex){
+                    IOUtil.exportTxt(fileToExport,rlm);
 
-                alertBox.setHeaderText("File Error");
-                alertBox.setContentText("Error opening file "+fileToExport.getAbsolutePath());
-                alertBox.showAndWait();
+                }catch(IOException ex){
 
-                System.err.println(ex.getMessage());
+                    alertBox.setHeaderText("File Error");
+                    alertBox.setContentText("Error opening file "+fileToExport.getAbsolutePath());
+                    alertBox.showAndWait();
+
+                    System.err.println(ex.getMessage());
+                }
+
+                System.out.println("EXPORTING");
             }
 
-            System.out.println("EXPORTING");
         }
 
         /*
@@ -107,6 +111,8 @@ public class IOController extends Observable implements EventHandler<ActionEvent
                 System.out.println(ex.getCause());
                 ex.printStackTrace();
             }
+
+            UserInterface.getTextArea().setText("File "+savedPath+" saved");
         }
 
         /*
