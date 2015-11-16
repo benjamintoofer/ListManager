@@ -158,7 +158,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
 
                 savedPath = fileToOpen.getAbsolutePath();
 
-                if(checkFileType(savedPath)){
+                if(checkFileType(savedPath,".ser")){
 
                     try{
                         FileInputStream fileIn = new FileInputStream(savedPath);
@@ -202,7 +202,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
         }
     }
 
-    private String setFileType(String fileName ,String fileExt){
+    private static String setFileType(String fileName ,String fileExt){
 
         int index = fileName.lastIndexOf(".");
         StringBuilder newFilePath = new StringBuilder(fileName);
@@ -219,7 +219,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
         return newFilePath.toString();
     }
 
-    private boolean checkFileType(String fileName){
+    private static boolean checkFileType(String fileName,String fileExt){
 
         boolean correctType = true;
         int index = fileName.lastIndexOf(".");
@@ -230,7 +230,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
 
         }else{
             String sub = fileName.substring(index);
-            if(!sub.equals(".ser"))
+            if(!sub.equals(fileExt))
                 correctType = false;
         }
 

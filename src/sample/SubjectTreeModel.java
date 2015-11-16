@@ -43,15 +43,15 @@ public class SubjectTreeModel extends Observable implements Serializable{
 
         Tree.Node<Subject> foundNode = tree.findNode(subject);
 
-        int numAss = foundNode.getData().getNumberOfAssociationsMade();
+        int numAssoc = foundNode.getData().getNumberOfAssociationsMade();
 
         if(!value){
 
-            if(numAss > 0)
-                foundNode.getData().setNumberOfAssociationsMade(numAss - 1);
+            if(numAssoc > 0)
+                foundNode.getData().setNumberOfAssociationsMade(numAssoc - 1);
 
         }else{
-            foundNode.getData().setNumberOfAssociationsMade(numAss + 1);
+            foundNode.getData().setNumberOfAssociationsMade(numAssoc + 1);
         }
 
         if(foundNode.getData().getNumberOfAssociationsMade() == 0){
