@@ -202,7 +202,14 @@ public class Tree<T> implements Serializable{
             parent.addChild(new Node<T>(newChild));
         }else{
 
-            parent = parent.getChildren().get(parent.getNumberOfChildren()-1);
+            if(parent.getNumberOfChildren() > 0){
+                parent = parent.getChildren().get(parent.getNumberOfChildren()-1);
+            }else{
+                System.out.println("Parents that has no children "+((Subject)parent.getData()).getName()+" Child to add "+((Subject)newChild).getName());
+            }
+
+            /*System.out.println(level-1+" "+((Subject)newChild).getName());
+            System.out.println("Parent: "+((Subject)parent.getData()).getName());*/
             addNodeToLevel(level-1,newChild,parent);
         }
 

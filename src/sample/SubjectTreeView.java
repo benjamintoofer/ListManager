@@ -136,10 +136,6 @@ public class SubjectTreeView extends VBox implements Serializable{
         //treeView.setRoot(currentTreeItem);
 
         System.out.println("LOADED LIST");
-        for(Subject s : childrenList){
-
-            System.out.println(s.getName() + "Number of children: "+s.getNumberOfChildren());
-        }
 
         while(!queue.isEmpty()){
 
@@ -165,10 +161,7 @@ public class SubjectTreeView extends VBox implements Serializable{
             }
 
             index++;
-            System.out.println("Current State of Queue: " + currentTreeItem.getValue().getName() + " Number of Child " + numChildren);
-            for(TreeItem<Subject> t : queue){
-                System.out.println(t.getValue().getName());
-            }
+
         }
 
 

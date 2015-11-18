@@ -657,7 +657,6 @@ public class IOUtil {
 
                 if(line.contains("Name:")){
 
-                    //System.out.println("Subject: "+line+" has "+numChildren+" children");
                     str = str + line + "::";
 
 
