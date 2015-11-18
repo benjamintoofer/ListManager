@@ -45,11 +45,13 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
                         if(success){
                             subjectTreeModel.setSubjectAssociated(selectedSubject, true);
                             subjectTreeModel.updateTreeColorAssociation(selectedSubject);
+                        }else{
+                            UserInterface.getTextArea().setText("Association already made with "+selectedClass.getClassName()+ " and "+selectedSubject.getName());
                         }
 
 
                     } else {
-
+                        StringBuilder strBuild = new StringBuilder();
                         childrenList = subjectTreeModel.getLeavesFromNode(selectedSubject);
                         for (Subject s : childrenList) {
 
@@ -60,11 +62,16 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
                                 subjectTreeModel.setSubjectAssociated(s, true);
                                 subjectTreeModel.updateTreeColorAssociation(s);
                                 System.out.println("Updated tree with new association!!");
+                                strBuild.append("Association created with "+selectedClass.getClassName() + " and "+s.getName()+"\n");
 
                             } else {
+
+                                strBuild.append("Association already made with " + selectedClass.getClassName() + " and " + selectedSubject.getName() + "\n");
                                 System.out.println("Association CANNOT BE CREATED with: "+s.getName());
                             }
                         }
+
+                        UserInterface.getTextArea().setText(strBuild.toString());
                     }
 
                     subjectView.getTreeView().refresh();
@@ -88,25 +95,34 @@ public class AssociationController implements EventHandler<ActionEvent>, Seriali
 
                         success = associationModel.removeAssociation(selectedSubject,selectedClass);
 
-                        if(success)
-                            subjectTreeModel.setSubjectAssociated(selectedSubject,false);
+                        if(success) {
+                            subjectTreeModel.setSubjectAssociated(selectedSubject, false);
                             subjectTreeModel.updateTreeColorAssociation(selectedSubject);
+                            UserInterface.getTextArea().setText("Disconnected  "+selectedClass.getClassName() + " and "+selectedSubject.getName());
+                        }else{
+                            UserInterface.getTextArea().setText("No association with "+selectedClass.getClassName() + " and "+selectedSubject.getName());
+                        }
 
                     }else{
 
+                        StringBuilder stringBuilder = new StringBuilder();
                         ArrayList<Subject> childrenList = subjectTreeModel.getChildrenFromNodePostOrder(selectedSubject);
 
                         for(Subject s: childrenList){
 
                             success = associationModel.removeAssociation(s,selectedClass);
-                            System.out.println("RESULT FROM REMOVE "+success);
                             if(success) {
 
                                 subjectTreeModel.setSubjectAssociated(s, false);
                                 subjectTreeModel.updateTreeColorAssociation(s);
+                                stringBuilder.append("Disconnected  "+selectedClass.getClassName() + " and "+s.getName()+"\n");
+                            }else{
+                                stringBuilder.append("No association with "+selectedClass.getClassName() + " and "+s.getName()+"\n");
                             }
 
                         }
+
+                        UserInterface.getTextArea().setText(stringBuilder.toString());
                     }
 
                     subjectView.updateTree();

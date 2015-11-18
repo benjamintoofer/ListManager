@@ -14,6 +14,7 @@ public class ViewMenuController implements EventHandler<ActionEvent>,Serializabl
 
 
     private SubjectTreeView subjectTreeView;
+    private SubjectTreeModel subjectTreeModel;
     private AssociationModel associationModel;
     private ClassListView classListView;
     private ClassListModel classListModel;
@@ -58,6 +59,7 @@ public class ViewMenuController implements EventHandler<ActionEvent>,Serializabl
                 }
 
                 subjectTreeView.expandRequestedNodes(subjectList);
+                UserInterface.getTextArea().setText("Showing Class: "+selectedClass.getClassName()+" connections");
 
 
             }else{
@@ -70,15 +72,38 @@ public class ViewMenuController implements EventHandler<ActionEvent>,Serializabl
 
             if(subjectTreeView.getSelectedTreeItem() != null){
 
-                ArrayList<Association> list = associationModel.queryBySubject(subjectTreeView.getSelectedTreeItem());
+                ArrayList<Association> list;
+                ArrayList<Subject> subjectLeafList;
                 ArrayList<Class> classList = new ArrayList<Class>();
 
-                for(Association a : list){
+                if(subjectTreeView.getSelectedTreeItem().isLeaf()){
 
-                    classList.add(a.getClassObj());
+                    list = associationModel.queryBySubject(subjectTreeView.getSelectedTreeItem());
+
+                    for(Association a : list){
+
+                        classList.add(a.getClassObj());
+                    }
+
+                }else{
+
+                    subjectLeafList = subjectTreeModel.getLeavesFromNode(subjectTreeView.getSelectedTreeItem());
+
+                    for(Subject s : subjectLeafList){
+                        list = associationModel.queryBySubject(s);
+
+                        for(Association a : list){
+
+                            if(!classList.contains(a.getClassObj()))
+                                classList.add(a.getClassObj());
+                        }
+
+                    }
                 }
 
+
                 classListView.addClasses(classList);
+                UserInterface.getTextArea().setText("Showing Subject: "+subjectTreeView.getSelectedTreeItem().getName()+" connections");
 
             }else{
 
@@ -153,5 +178,10 @@ public class ViewMenuController implements EventHandler<ActionEvent>,Serializabl
     public void addClassListModel(ClassListModel model){
 
         classListModel = model;
+    }
+
+    public void addSubjectTreeModel(SubjectTreeModel model){
+
+        subjectTreeModel = model;
     }
 }

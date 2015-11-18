@@ -426,6 +426,8 @@ public class SubjectTreeView extends VBox implements Serializable{
 
                     if(!this.getTreeView().getRoot().getValue().equals(this.getItem())){
                         setGraphic(stack);
+                    }else{
+                        setGraphic(null);
                     }
 
 

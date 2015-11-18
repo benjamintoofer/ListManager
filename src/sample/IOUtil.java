@@ -587,15 +587,15 @@ public class IOUtil {
 
             }
 
-            writer.write(indent+"Name: "+s.getName()+"\n"+indent+"Description: "+s.getDescription()+"\n"+indent+"Association: ");
+            writer.write(indent+"Name: "+s.getName()+"\n"+indent+"Description:"+s.getDescription()+"\n"+indent+"Association:");
 
             StringBuilder assocStr = new StringBuilder();
 
             if(s.isAssociated()){
-
+             System.out.println("Subject = "+s.getName() + "Assoc = "+s.isAssociated());
                 for(Association a: assocList){
 
-                    assocStr.append(a.getClassObj().getClassName()+", ");
+                    assocStr.append(a.getClassObj().getClassName()+",");
                 }
                 int lastIndex = assocStr.lastIndexOf(",");
                 assocStr.replace(lastIndex, lastIndex, "\n\n");
@@ -645,7 +645,7 @@ public class IOUtil {
 
 
                 if(line.contains("Name:")){
-                    str = str + line + "::";
+                    str = str + line + ";;";
                 }
 
                 if(line.contains("Description:")){
@@ -657,12 +657,12 @@ public class IOUtil {
 
                 if(line.contains("Name:")){
 
-                    str = str + line + "::";
+                    str = str + line + ";;";
 
 
                 }else if(line.contains("Description:")) {
 
-                    str = str + line + "::";
+                    str = str + line + ";;";
                 }else if(line.contains("Association:")){
 
                     int tabCounter = 0;
@@ -734,7 +734,7 @@ public class IOUtil {
     {
 
         Class c = new Class();
-        String[] classString = str.split("::");
+        String[] classString = str.split(";;");
         for(String s : classString){
 
             if(s.contains("Name:")){
@@ -760,7 +760,8 @@ public class IOUtil {
     private static Subject processSubjectChunk(String str){
 
         Subject subject = new Subject("","");
-        String[] subjectString = str.split("::");
+        String[] subjectString = str.split(";;");
+        //System.out.println(str);
         for(String s : subjectString){
 
             if(s.contains("Name:")){
@@ -779,6 +780,7 @@ public class IOUtil {
             }
 
             if(s.contains("Association:")){
+                //System.out.println(subject.getName()+" "+s);
                 int index = s.indexOf(":");
                 String subjectAssoc = s.substring(index+1,s.length());
                 subjectAssoc = subjectAssoc.trim();

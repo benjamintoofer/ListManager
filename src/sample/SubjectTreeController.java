@@ -49,7 +49,9 @@ public class SubjectTreeController implements EventHandler<ActionEvent>, Seriali
 
             }else if(((MenuItem) e.getTarget()).getId().equals("delete_menu_item")){
 
+                removeClassDialogBox.setHeaderText(subjectTreeView.getSelectedTreeItem().getName());
                 Optional<ButtonType> result = removeClassDialogBox.showAndWait();
+
                 if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
 
                     Subject subjectToRemove = subjectTreeView.getSelectedTreeItem();
