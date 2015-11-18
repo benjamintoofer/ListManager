@@ -187,6 +187,26 @@ public class Tree<T> implements Serializable{
             updateParentAssociations(node.getParent());
         }
     }
+
+    public void addNodeToLevel(int level, T newChild){
+
+        Node<T> root = rootNode;
+
+        addNodeToLevel(level - 1, newChild, rootNode);
+    }
+
+    private void addNodeToLevel(int level, T newChild , Node<T> parent){
+
+        if(level == 1){
+
+            parent.addChild(new Node<T>(newChild));
+        }else{
+
+            parent = parent.getChildren().get(parent.getNumberOfChildren()-1);
+            addNodeToLevel(level-1,newChild,parent);
+        }
+
+    }
     ////////////////////////////////////////////////////
     /*
         Add elements from the tree
@@ -199,7 +219,6 @@ public class Tree<T> implements Serializable{
         Node<T> childToFind = findNode(element);
         Node<T> addNode = new Node<T>(newChildToAdd);
 
-        ((Subject)childToFind.getData()).setLeaf(false);
         childToFind.addChild(addNode);
 
         return newChildToAdd;
@@ -387,6 +406,8 @@ public class Tree<T> implements Serializable{
                 children = new ArrayList<Node<T>>();
             }
             child.setParent(this);
+            ((Subject)child.getParent().getData()).setLeaf(false);
+            ((Subject)child.getData()).setLeaf(true);
             ((Subject)child.getData()).setPath("." + (this.childIndex) + ((Subject) this.getData()).getPath());
             ((Subject)child.getData()).setPosition(this.childIndex);
             ((Subject)this.getData()).incrementNumberOfChildren();

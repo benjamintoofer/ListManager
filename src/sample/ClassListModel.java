@@ -21,6 +21,11 @@ public class ClassListModel extends Observable implements Serializable{
 
         classList = new ArrayList<>();
     }
+
+    public void addClasses(ArrayList<Class> list){
+
+        classList = list;
+    }
     public void addClassToList(Class newClass){
 
         if(classList == null)

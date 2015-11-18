@@ -52,6 +52,45 @@ public class IOController extends Observable implements EventHandler<ActionEvent
     {
 
         /*
+            Handle Importing
+         */
+        if(((MenuItem)e.getTarget()).getId().equals("import_item")){
+
+            fileChooser.setTitle("Import File");
+            File fileToImport = fileChooser.showOpenDialog(stage);
+
+            if(fileToImport != null){
+                System.out.println("FILE NOT NULL");
+                if(checkFileType(fileToImport.getAbsolutePath(),".txt")){
+                    try{
+
+                        IOUtil.importText2(fileToImport,rlm);
+
+                        classListView.loadViewFromModel(rlm.getClassListModel());
+                        subjectTreeView.loadViewFromModel(rlm.getSubjectTreeModel());
+
+                    }catch(IOException ex){
+
+                        System.err.println(ex.getMessage());
+                    }
+
+                    System.out.println("IMPORTING");
+                    UserInterface.getTextArea().setText("Imported "+fileToImport.getAbsolutePath());
+
+                    setChanged();
+                    notifyObservers();
+                }else{
+                    alertBox.setHeaderText("File Error");
+                    alertBox.setContentText("File " + fileToImport.getAbsolutePath() + " incorrect file type\n\n Required file type of \".txt\"");
+                    alertBox.showAndWait();
+
+                }
+
+            }
+
+        }
+
+        /*
             Handle Exporting
          */
         if(((MenuItem)e.getTarget()).getId().equals("export_item")){
@@ -63,18 +102,19 @@ public class IOController extends Observable implements EventHandler<ActionEvent
 
                 try{
 
-                    IOUtil.exportTxt(fileToExport,rlm);
+                    IOUtil.exportTxt2(fileToExport,rlm);
 
                 }catch(IOException ex){
 
                     alertBox.setHeaderText("File Error");
-                    alertBox.setContentText("Error opening file "+fileToExport.getAbsolutePath());
+                    alertBox.setContentText("Error exporting file "+fileToExport.getAbsolutePath());
                     alertBox.showAndWait();
 
                     System.err.println(ex.getMessage());
                 }
 
                 System.out.println("EXPORTING");
+                UserInterface.getTextArea().setText("Exported "+fileToExport.getAbsolutePath());
             }
 
         }
@@ -94,25 +134,29 @@ public class IOController extends Observable implements EventHandler<ActionEvent
 
                     savedPath = setFileType(fileToSave.getAbsolutePath(),".ser");
 
+                    //Save file
+                    try{
+
+                        FileOutputStream fileOut = new FileOutputStream(savedPath);
+                        ObjectOutputStream out = new ObjectOutputStream(fileOut);
+                        out.writeObject(rlm);
+                        out.close();
+                        fileOut.close();
+
+                    }catch(IOException ex){
+
+                        System.out.println(ex.getCause());
+                        ex.printStackTrace();
+                    }
+
+                    UserInterface.getTextArea().setText("File "+savedPath+" saved");
+
                 }
+
+
             }
 
-            //Save file
-            try{
 
-                FileOutputStream fileOut = new FileOutputStream(savedPath);
-                ObjectOutputStream out = new ObjectOutputStream(fileOut);
-                out.writeObject(rlm);
-                out.close();
-                fileOut.close();
-
-            }catch(IOException ex){
-
-                System.out.println(ex.getCause());
-                ex.printStackTrace();
-            }
-
-            UserInterface.getTextArea().setText("File "+savedPath+" saved");
         }
 
         /*
@@ -142,6 +186,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
                     ex.printStackTrace();
                 }
 
+                UserInterface.getTextArea().setText("File "+savedPath+" saved");
             }
         }
 
@@ -187,6 +232,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
                         return;
                     }
 
+                    UserInterface.getTextArea().setText("File "+savedPath+" opened");
                     setChanged();
                     notifyObservers();
 

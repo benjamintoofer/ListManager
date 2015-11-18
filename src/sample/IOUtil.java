@@ -447,13 +447,13 @@ public class IOUtil {
 
         for(Class c : classList){
 
-            writer.write("Name: "+c.getClassName()+"\nDescription: "+c.getClassDescription()+"\n\n");
+            writer.write(c.getClassName()+" : "+c.getClassDescription()+"\n");
         }
 
         /*
             Print Subjects
          */
-        writer.write("\n\nSubjects:\n");
+        writer.write("\n");
 
         Subject rootSubject = man.getSubjectTreeModel().getRootNode();
         ArrayList<Subject> subjectList = man.getSubjectTreeModel().getChildrenFromNodePreOrder(rootSubject);
@@ -468,40 +468,314 @@ public class IOUtil {
 
             String indents = "";
             path = s.getPath();
+            int counter = 0;
 
             //Find the depth of the subject in the subject's path
             for(int i = 0; i < path.length();i++){
                 if(path.charAt(i) == '.')
+                    counter++;
+
+            }
+
+            if(counter == 2){
+
+                writer.write(s.getName()+"/");
+
+            }else if(counter == 3){
+                writer.write(s.getName()+"\n"+s.getDescription()+"\n");
+            }else if(counter > 3){
+
+                int tabs = counter -  3;
+
+                for(int i = 0; i < tabs; i++){
+
                     indents = indents + "\t";
+                }
+
+                if(!assocList.isEmpty()){
+
+                    writer.write(indents+s.getName()+" : ");
+                    StringBuilder assocString = new StringBuilder();
+
+                    if(!assocList.isEmpty()) {
+
+                        for (Association a : assocList) {
+
+                            assocString.append(a.getClassObj().getClassName() + ", ");
+
+                        }
+
+                        int lastIndex = assocString.lastIndexOf(",");
+                        assocString.replace(lastIndex, lastIndex + 1, "\n");
+                        writer.write(assocString.toString() + indents + "\t" + s.getDescription()+"\n");
+
+                    }
+                }else{
+
+                    writer.write(indents+s.getName()+"\n"+indents+"\t"+s.getDescription()+"\n");
+                }
+
+            }
+
+        }
+        writer.flush();
+        writer.close();
+    }
+
+    public static void exportTxt2(File file, RunListManager man) throws IOException {
+        File f = file;
+        BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+
+        /*
+            Print classes
+         */
+        writer.write("Classes:\n");
+
+        //Get list of class and loop through each class and print their name and description
+        ArrayList<Class> classList = man.getClassListModel().getClassList();
+
+        for(Class c : classList){
+
+            writer.write("Name: "+c.getClassName()+"\nDescription: "+c.getClassDescription()+"\n\n");
+        }
+
+        /*
+            Print Subjects
+         */
+        writer.write("\n Subjects:\n\n");
+
+        Subject rootSubject = man.getSubjectTreeModel().getRootNode();
+        ArrayList<Subject> subjectList = man.getSubjectTreeModel().getChildrenFromNodePreOrder(rootSubject);
+        String path;
+
+
+        for(Subject s : subjectList){
+
+            ArrayList<Association> assocList = man.getAssociationModel().queryBySubject(s);
+
+
+            path = s.getPath();
+            String indent = "";
+            //Find the depth of the subject in the subject's path
+            for(int i = 0; i < path.length();i++){
+
+                if(path.charAt(i) == '.'){
+
+                    indent = indent + "\t";
+                }
+
+            }
+
+            writer.write(indent+"Name: "+s.getName()+"\n"+indent+"Description: "+s.getDescription()+"\n"+indent+"Association: ");
+
+            StringBuilder assocStr = new StringBuilder();
+
+            if(s.isAssociated()){
+
+                for(Association a: assocList){
+
+                    assocStr.append(a.getClassObj().getClassName()+", ");
+                }
+                int lastIndex = assocStr.lastIndexOf(",");
+                assocStr.replace(lastIndex, lastIndex, "\n\n");
+                writer.write(assocStr.toString());
+            }else{
+                writer.write("\n\n");
             }
 
 
-            writer.write(indents +"- Name: "+s.getName()+"\n"+indents+"Description: "+s.getDescription()+"\n"+indents+"Associations: ");
+        }
+        writer.flush();
+        writer.close();
+    }
+
+    public static void importText2(File file,RunListManager rlm) throws IOException{
 
 
-            StringBuilder assocString = new StringBuilder();
-            if(!assocList.isEmpty()){
+        BufferedReader br = new BufferedReader(new FileReader(file));
+        String line = "";
+        boolean firstSubject = true;
+        String str = "";
+        ArrayList<Class> classList = new ArrayList<Class>();
+        ClassListModel classListModel = new ClassListModel();
+        SubjectTreeModel subjectTreeModel = new SubjectTreeModel();
+        AssociationModel associationModel = new AssociationModel();
+        Tree<Subject> tree = null;
 
-                for(Association a : assocList){
 
-                    assocString.append(a.getClassObj().getClassName()+", ");
+        boolean createClass = false;
 
+        while((line=br.readLine())!=null){
+
+
+            //Read in the Classes
+            if(line.contains("Classes:")){
+                System.out.println("Found CLASSES ");
+                createClass = true;
+            }
+            if(line.contains("Subjects:")){
+
+
+                System.out.println("Found SUBJECTS ");
+                createClass = false;
+            }
+
+            if(createClass){
+
+
+                if(line.contains("Name:")){
+                    str = str + line + "::";
                 }
-                int lastIndex = assocString.lastIndexOf(",");
 
-                assocString.replace(lastIndex,lastIndex+1,"\n\n");
-
+                if(line.contains("Description:")){
+                    str = str + line;
+                    classList.add(processClassChunk(str));
+                    str = "";
+                }
             }else{
 
-                assocString.append("\n\n");
+                if(line.contains("Name:")){
+
+                    //System.out.println("Subject: "+line+" has "+numChildren+" children");
+                    str = str + line + "::";
+
+
+                }else if(line.contains("Description:")) {
+
+                    str = str + line + "::";
+                }else if(line.contains("Association:")){
+
+                    int tabCounter = 0;
+                    for(int i = 0; i < line.length(); i++){
+                        if(line.charAt(i) == '\t'){
+                            tabCounter++;
+                        }
+                    }
+
+                    str = str + line;
+                    Subject subjectToAdd = processSubjectChunk(str);
+
+                    if(firstSubject){
+
+                        tree = new Tree<Subject>(subjectToAdd);
+                        firstSubject = false;
+
+                    }else{
+
+                        if(tree != null){
+                            tree.addNodeToLevel(tabCounter,subjectToAdd);
+                            tree.updateParentAssociations(subjectToAdd);
+                        }
+
+                    }
+
+                    /*
+                        Process Associations
+                     */
+                    int index = line.indexOf(":");
+                    String tempStr = line.substring(index+1,line.length());
+                    tempStr = tempStr.trim();
+
+                    if(!tempStr.isEmpty()){
+
+                        String[] assocArr = tempStr.split(",");
+
+                        for(String s : assocArr){
+                            s = s.trim();
+
+                            for(Class c : classList){
+
+                                if(c.getClassName().equals(s))
+                                    associationModel.addAssociation(new Association(c,subjectToAdd));
+                            }
+
+                        }
+                    }
+
+
+                    str = "";
+                }
+
             }
 
-            writer.write(assocString.toString());
 
         }
 
-        writer.flush();
-        writer.close();
+
+
+        subjectTreeModel.setTree(tree);
+        classListModel.addClasses(classList);
+        rlm.setClassListModel(classListModel);
+        rlm.setSubjectTreeModel(subjectTreeModel);
+        rlm.setAssociationModel(associationModel);
+    }
+
+    private static Class processClassChunk(String str)
+    {
+
+        Class c = new Class();
+        String[] classString = str.split("::");
+        for(String s : classString){
+
+            if(s.contains("Name:")){
+
+                int index = s.indexOf(":");
+                String className = s.substring(index+1,s.length());
+                className = className.trim();
+                c.setClassName(className);
+            }
+
+            if(s.contains("Description:")){
+                int index = s.indexOf(":");
+                String classDesc = s.substring(index+1,s.length());
+                classDesc = classDesc.trim();
+                c.setClassDescription(classDesc);
+            }
+        }
+
+        return c;
+
+    }
+
+    private static Subject processSubjectChunk(String str){
+
+        Subject subject = new Subject("","");
+        String[] subjectString = str.split("::");
+        for(String s : subjectString){
+
+            if(s.contains("Name:")){
+
+                int index = s.indexOf(":");
+                String subjectName = s.substring(index+1,s.length());
+                subjectName = subjectName.trim();
+                subject.setName(subjectName);
+            }
+
+            if(s.contains("Description:")){
+                int index = s.indexOf(":");
+                String subjectDesc = s.substring(index+1,s.length());
+                subjectDesc = subjectDesc.trim();
+                subject.setDescription(subjectDesc);
+            }
+
+            if(s.contains("Association:")){
+                int index = s.indexOf(":");
+                String subjectAssoc = s.substring(index+1,s.length());
+                subjectAssoc = subjectAssoc.trim();
+
+                if(subjectAssoc.isEmpty()){
+                    subject.setAssociated(false);
+                }else{
+                    subject.setAssociated(true);
+                    subject.setLeaf(true);
+
+                    //Go through list of Assoc and count how many to set number of assoc
+                    String[] assocString = s.split(",");
+                    subject.setNumberOfAssociationsMade(assocString.length);
+                }
+            }
+        }
+        return subject;
     }
 
 }

@@ -142,6 +142,21 @@ public class RunListManager implements Serializable,Observer{
         return classListModel;
     }
 
+    public void setClassListModel(ClassListModel model){
+
+        classListModel = model;
+    }
+
+    public void setSubjectTreeModel(SubjectTreeModel model){
+
+        subjectTreeModel = model;
+    }
+
+    public void setAssociationModel(AssociationModel model){
+
+        associationModel = model;
+    }
+
     @Override
     public void update(Observable o, Object arg)
     {

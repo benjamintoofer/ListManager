@@ -35,6 +35,10 @@ public class SubjectTreeModel extends Observable implements Serializable{
         return rootNode;
     }
 
+    public void setTree(Tree tree){
+
+        this.tree = tree;
+    }
     public Tree.Node<Subject> findNode(Subject s){
 
         return tree.findNode(s);

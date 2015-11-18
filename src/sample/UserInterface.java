@@ -53,6 +53,7 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
     private transient MenuItem saveAsMenuItem;
     private transient MenuItem openMenuItem;
     private transient MenuItem exportMenuItem;
+    private transient MenuItem importMenuItem;
     private transient MenuItem resetMenuItem;
 
 
@@ -86,6 +87,9 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
 
         exportMenuItem = new MenuItem("Export...");
         exportMenuItem.setId("export_item");
+
+        importMenuItem = new MenuItem("Import...");
+        importMenuItem.setId("import_item");
 
         showAssociatedMenuItem = new MenuItem("Show Associated");
         showAssociatedMenuItem.setId("show_associated_item");
@@ -125,7 +129,7 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         menuBar.setVisible(true);
 
         showConnectionsMenu.getItems().addAll(showClassConnectionMenuItem,showSubjectConnectionMenuItem);
-        fileMenu.getItems().addAll(openMenuItem, saveMenuItem, saveAsMenuItem,exportMenuItem);
+        fileMenu.getItems().addAll(openMenuItem, saveMenuItem, saveAsMenuItem,importMenuItem,exportMenuItem);
         viewMenu.getItems().addAll(showInfoMenuItem,showConnectionsMenu,showUnAssociatedMenuItem,showAssociatedMenuItem,resetMenuItem);
 
 
@@ -239,6 +243,7 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         saveMenuItem.setOnAction(controller);
         openMenuItem.setOnAction(controller);
         exportMenuItem.setOnAction(controller);
+        importMenuItem.setOnAction(controller);
     }
 
     public void updateView(){
