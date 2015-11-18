@@ -2,8 +2,6 @@ package sample;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Scanner;
 
 /**
@@ -16,8 +14,8 @@ public class IOUtil {
 // TODO: remove static main upon full impl, change parser to static
     public static void main(String args[]) {
         try {
-            //parse("//Users//Andrew//Desktop//CS2013-final-report.txt");
-            importTxt("//Users//Andrew//Desktop//testin.txt");
+            parse("//Users//Andrew//Desktop//CS2013-final-report.txt");
+            //importTxt("//Users//Andrew//Desktop//text.txt");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -28,20 +26,10 @@ public class IOUtil {
     public static void parse(String filepath) throws IOException {
         File f = new File(filepath);
         FileInputStream input = new FileInputStream(f);
-        Scanner scanner = new Scanner(input);
         String line = "";
-        char[] chars;
-
-        String subjDesc = "";
-        String innerLine ="";
         String requirement = "";
-        int tab = 0;
-        boolean topics = false;
-        boolean makeAssoc = false;
         boolean foundSubj = false;
-        boolean crossRef = false;
         ArrayList<String> knowledgeType = new ArrayList<String>();
-        //TODO: Placeholder Objects (begin with set to null)
         int count = 0;
 
         BufferedReader br = new BufferedReader(new FileReader(filepath));
@@ -57,7 +45,6 @@ public class IOUtil {
                         System.out.println("\n\nPROCESSING CHUNK: " + requirement);
                         parseProcess(requirement);
                         requirement = "";
-                        crossRef = false;
                     }
                     foundSubj = true;
                     //System.out.println("----------BEGIN----------");
@@ -81,14 +68,11 @@ public class IOUtil {
         Scanner scanner = new Scanner(requirement);
         String[] splitSubject;
         String temp = "";
-        String previous = "previous";
         String lines = "";
         String subject = scanner.nextLine();
-        //System.out.println("Found Learning Requirement Subject: " + subject.trim());
         splitSubject = subject.split("/");
         System.out.println("SUBJ: " + splitSubject[1]);
         System.out.println("GENRE: " + splitSubject[0]);
-        boolean endOfSection = false;
 
         while(scanner.hasNextLine()) {
             temp = scanner.nextLine();
@@ -264,6 +248,7 @@ public class IOUtil {
                             //ADD TOPIC split[0]
 
                             //ADD ASSOC split[1]
+
                             assoc = split[1].split(",");
                             for (int i = 0; i < assoc.length; i++) {
                                 //Create assoc
