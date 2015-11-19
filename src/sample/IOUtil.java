@@ -14,7 +14,7 @@ public class IOUtil {
 
     private static String previousGenre = "";
     // Experimental feature to parse a PDF converted to TXT. Contains numerous algorithms to attempt to parse through and identify target values.
-    public static void parseToTxt(String filepath) throws IOException {
+    public static String parseToTxt(String filepath) throws IOException {
         String[] ext = filepath.split("\\.");
         String outFileName = ext[0] + "-PARSED.txt";
         BufferedWriter output = new BufferedWriter(new FileWriter(outFileName));
@@ -53,12 +53,14 @@ public class IOUtil {
             }
         }
 
-        parseProcess(requirement, output);
+        parseProcessSimple(requirement, output);
 
         System.out.println("Done parsing");
 
         output.flush();
         output.close();
+
+        return outFileName;
     }
 
     private static void parseProcessSimple(String requirement, BufferedWriter output) throws IOException {
