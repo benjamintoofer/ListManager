@@ -38,7 +38,7 @@ public class SubjectTreeView extends VBox implements Serializable{
         root.setPath(".0");
         rootNode.setValue(root);
         treeView = new TreeView<>((TreeItem<Subject>) rootNode);
-        treeView.setPrefSize(400, 900);
+        treeView.setPrefSize(475, 900);
         treeView.setEditable(true);
         treeView.setCellFactory((TreeView<Subject> p) -> new CustomTreeCell());
         addDialogBox = new DialogBox("Subject",true);

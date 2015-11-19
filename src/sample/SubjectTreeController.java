@@ -43,6 +43,8 @@ public class SubjectTreeController implements EventHandler<ActionEvent>, Seriali
                     Subject addSubject = new Subject(addClassDialogBox.getClassName(),addClassDialogBox.getDesc());
                     subjectTreeModel.setSubjectAssociated(subjectTreeView.getSelectedTreeItem(),false);
                     subjectTreeModel.addItem(subjectTreeView.getSelectedTreeItem(),addSubject);
+
+                    UserInterface.getTextArea().setText("Added Subject: "+addClassDialogBox.getClassName() + " to Subject: "+subjectTreeView.getSelectedTreeItem().getName());
                 }
 
                 System.out.println("Printing associations after add:\n" + associationModel.printAssociations());
@@ -79,6 +81,7 @@ public class SubjectTreeController implements EventHandler<ActionEvent>, Seriali
 
                     subjectTreeModel.removeItem(subjectToRemove);
 
+                    UserInterface.getTextArea().setText("Deleted Subject: "+subjectToRemove);
                 }
 
             }

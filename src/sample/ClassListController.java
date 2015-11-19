@@ -41,6 +41,8 @@ public class ClassListController implements EventHandler<ActionEvent>, Serializa
                 if(result.isPresent() && result.get().getButtonData() == ButtonBar.ButtonData.OK_DONE){
 
                     classListModel.addClassToList(new Class(addClassDialogBox.getClassName(),addClassDialogBox.getDesc()));
+
+                    UserInterface.getTextArea().setText("Added Class: "+addClassDialogBox.getClassName());
                 }
 
 
@@ -75,6 +77,8 @@ public class ClassListController implements EventHandler<ActionEvent>, Serializa
                         }
                         associationModel.removeAssociation(c);
                         classListModel.removeClassFromList(classListView.getSelectedClassByString());
+
+                        UserInterface.getTextArea().setText("Deleted Class: "+className);
                     }
                 }
 

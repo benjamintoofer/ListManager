@@ -54,6 +54,7 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
     private transient MenuItem openMenuItem;
     private transient MenuItem exportMenuItem;
     private transient MenuItem importMenuItem;
+    private transient MenuItem parseMenuItem;
     private transient MenuItem resetMenuItem;
 
 
@@ -90,6 +91,9 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
 
         importMenuItem = new MenuItem("Import...");
         importMenuItem.setId("import_item");
+
+        parseMenuItem = new MenuItem("Parse...");
+        parseMenuItem.setId("parse_item");
 
         showAssociatedMenuItem = new MenuItem("Show Associated");
         showAssociatedMenuItem.setId("show_associated_item");
@@ -129,12 +133,12 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         menuBar.setVisible(true);
 
         showConnectionsMenu.getItems().addAll(showClassConnectionMenuItem,showSubjectConnectionMenuItem);
-        fileMenu.getItems().addAll(openMenuItem, saveMenuItem, saveAsMenuItem,importMenuItem,exportMenuItem);
+        fileMenu.getItems().addAll(openMenuItem, saveMenuItem, saveAsMenuItem,importMenuItem,exportMenuItem,parseMenuItem);
         viewMenu.getItems().addAll(showInfoMenuItem,showConnectionsMenu,showUnAssociatedMenuItem,showAssociatedMenuItem,resetMenuItem);
 
 
         this.setPrefSize(winWidth, winHeight);
-        menuBar.setPrefSize(winWidth,40);
+        menuBar.setPrefSize(winWidth,30);
         this.setTop(menuBar);
         this.setPrefSize(winWidth,winHeight);
         menuBar.getMenus().addAll(fileMenu,viewMenu);
@@ -244,6 +248,7 @@ public class UserInterface extends BorderPane implements Observer,Serializable{
         openMenuItem.setOnAction(controller);
         exportMenuItem.setOnAction(controller);
         importMenuItem.setOnAction(controller);
+        parseMenuItem.setOnAction(controller);
     }
 
     public void updateView(){

@@ -52,6 +52,42 @@ public class IOController extends Observable implements EventHandler<ActionEvent
     {
 
         /*
+            Handle Parsing
+         */
+        if(((MenuItem)e.getTarget()).getId().equals("parse_item")){
+
+            fileChooser.setTitle("Parse File");
+            File fileToParse = fileChooser.showOpenDialog(stage);
+
+            if(fileToParse != null){
+
+                if(checkFileType(fileToParse.getAbsolutePath(),".txt")){
+                    try{
+                        File fileToImport = new File(IOUtil.parseToTxt(fileToParse.getAbsolutePath()));
+                        //System.out.println(fileToImport.getName());
+                        IOUtil.importText2(fileToImport,rlm);
+
+                        classListView.loadViewFromModel(rlm.getClassListModel());
+                        subjectTreeView.loadViewFromModel(rlm.getSubjectTreeModel());
+
+                    }catch(IOException ex){
+
+                    }
+                    UserInterface.getTextArea().setText("Parsed "+fileToParse.getAbsolutePath());
+                }else{
+
+                    alertBox.setHeaderText("File Error");
+                    alertBox.setContentText("File " + fileToParse.getAbsolutePath() + " incorrect file type\n\n Required file type of \".txt\"");
+                    alertBox.showAndWait();
+                }
+
+
+                setChanged();
+                notifyObservers();
+            }
+        }
+
+        /*
             Handle Importing
          */
         if(((MenuItem)e.getTarget()).getId().equals("import_item")){
@@ -60,7 +96,7 @@ public class IOController extends Observable implements EventHandler<ActionEvent
             File fileToImport = fileChooser.showOpenDialog(stage);
 
             if(fileToImport != null){
-                System.out.println("FILE NOT NULL");
+
                 if(checkFileType(fileToImport.getAbsolutePath(),".txt")){
                     try{
 
@@ -74,7 +110,6 @@ public class IOController extends Observable implements EventHandler<ActionEvent
                         System.err.println(ex.getMessage());
                     }
 
-                    System.out.println("IMPORTING");
                     UserInterface.getTextArea().setText("Imported "+fileToImport.getAbsolutePath());
 
                     setChanged();
@@ -97,6 +132,8 @@ public class IOController extends Observable implements EventHandler<ActionEvent
 
             fileChooser.setTitle("Export File");
             File fileToExport = fileChooser.showSaveDialog(stage);
+
+            fileToExport = new File(setFileType(fileToExport.getAbsolutePath(),".txt"));
 
             if(fileToExport != null){
 
